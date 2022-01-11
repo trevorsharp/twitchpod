@@ -49,10 +49,10 @@ Files will be stored in the data directory using the following structure:
 ```
 data
  |
- └── feedId1.png
+ └── username1.png
  |
- └── feedId2.png
+ └── username2.png
  |
- └── feedId3.png
+ └── username3.png
  ...
 ```
