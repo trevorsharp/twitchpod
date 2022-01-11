@@ -1,5 +1,4 @@
 import express from 'express';
-import feedService from './services/feedService';
 import rssService from './services/rssService';
 import videoService from './services/videoService';
 import config from './utilities/config';
@@ -21,14 +20,7 @@ app.get('/video/:videoId', async (req, res) => {
 
 app.get('/:id', async (req, res) => {
   try {
-    const feed = await feedService.getFeedData(req.params.id, req.query.title?.toString());
-
-    if (!feed) {
-      res.status(404).send(`Could not find user with name ${req.params.id}`);
-      return;
-    }
-
-    const rss = await rssService.getRssFeed(feed);
+    const rss = await rssService.getRssFeed(req.params.id, req.query.title?.toString());
 
     if (rss === '') {
       res.status(404).send(`Could not find user with name ${req.params.id}`);

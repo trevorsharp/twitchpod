@@ -1,24 +1,26 @@
 import { Podcast } from 'podcast';
-import { Feed } from '../types';
+import { Video } from '../types'
+import twitchService from './twitchService';
 import config from '../utilities/config';
 import cache from '../utilities/cache';
 
 class RssService {
-  static getRssFeed = async (feed: Feed) => {
-    const cacheKey = `rss-${feed.id}`;
-    const cacheResult = cache.get(cacheKey);
-    if (cacheResult) return cacheResult;
+  static getRssFeed = async (username: string, title: string | undefined) => {
+    const cacheKey = `videos-${username}`;
+    const videos: Video[] = cache.get(cacheKey) ?? await twitchService.getVideosForUser(username);
+
+    cache.set(cacheKey, videos, 300);
 
     const rssFeed = new Podcast({
-      title: feed.title,
-      description: feed.title,
-      author: feed.title,
-      feedUrl: `${config.hostname}/${feed.id}`,
-      siteUrl: `https://twitch.tv/${feed.id}`,
-      imageUrl: `${config.hostname}/covers/${feed.id.toLowerCase()}${config.coverArtFileExtension}`,
+      title: title ?? username,
+      description: title ?? username,
+      author: title ?? username,
+      feedUrl: `${config.hostname}/${username}`,
+      siteUrl: `https://twitch.tv/${username}`,
+      imageUrl: `${config.hostname}/covers/${username.toLowerCase()}${config.coverArtFileExtension}`,
     });
 
-    feed.videos.forEach((video) => {
+    videos.forEach((video) => {
       const itunesDuration = video.duration;
       rssFeed.addItem({
         title: video.title,
@@ -31,11 +33,7 @@ class RssService {
       });
     });
 
-    const rssContent = rssFeed.buildXml();
-
-    cache.set(cacheKey, rssContent, 300);
-
-    return rssContent;
+    return rssFeed.buildXml();
   };
 }
 

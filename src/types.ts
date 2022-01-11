@@ -1,9 +1,3 @@
-export interface Feed {
-  id: string;
-  title: string;
-  videos: Video[];
-}
-
 export interface Video {
   id: string;
   title: string;
