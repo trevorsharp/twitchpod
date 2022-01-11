@@ -17,10 +17,8 @@ Prerequisites:
 To run this application using docker:
 
 1. Create the `docker-compose.yml` file as described below
-2. (Optional) - Add cover art photos for streamers in the `data` directory with the name `username.png` where username is the Twitch username of the streamer. Make the file names all lowercase
-3. Run `docker-compose up -d` in the folder where your `docker-compose.yml` lives
-4. Check the logs using `docker-compose logs -f` to see if there are any errors in your configuration
-5. Add podcast feeds to your podcast app of choice with the URL `http://hostname/username?title=Podcast%20Title` where `hostname` is the domain name or IP address specified in the docker-compose file, `username` is the Twitch username the desired streamer, and `Podcast%20Title` is the desired title of the podcast feed. Be sure to URL encode the podcast title (e.g. replace spaces with `%20`)
+2. Run `docker-compose up -d` in the folder where your `docker-compose.yml` lives
+3. Check the logs using `docker-compose logs -f` to see if there are any errors in your configuration
 
 ### docker-compose.yml
 
@@ -33,26 +31,24 @@ services:
     restart: always
     ports:
       - 80:80
-    environment:
-      - "HOSTNAME=http://example.com"
-    volumes:
-      - REPLACE_WITH_DATA_DIRECTORY_PATH/data:/app/data
-
 ```
 
-Create a file named `docker-compose.yml` with the contents above, fill in your hostname where you will access the podcasts feeds from, and substitute in the file path to your data folder.
+Create a file named `docker-compose.yml` with the contents above.
 
-### Data Directory Structure
+## Adding Podcast Feeds
 
-Files will be stored in the data directory using the following structure:
+Add podcast feeds to your podcast app of choice using the following URL format `http://hostname/username`
 
-```
-data
- |
- └── username1.png
- |
- └── username2.png
- |
- └── username3.png
- ...
-```
+- `hostname` is the domain name or static IP address that reaches the docker container on port 80
+- `username` is the Twitch username of the desired streamer
+
+### Optional URL Query Parameters
+
+- `title` - Frmatted title for the podcast feed (e.g. `Username%20VODs`)
+- `image` - URL of an image for the podcast feed's cover art (e.g. `https%3A%2F%2Fexample.com%2FpathToImage.jpg`)
+
+**Note** All optional parameters must be URL encoded. You can use a tool such as [this one](https://www.urlencoder.org) to encode your parameters
+
+## Example
+
+`http://yourdomain.com/hasanabi?title=HasanAbi%20VODs&image=https%3A%2F%2Fstatic-cdn.jtvnw.net%2Fjtv_user_pictures%2F0347a9aa-e396-49a5-b0f1-31261704bab8-profile_image-300x300.jpeg`
