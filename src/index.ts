@@ -1,12 +1,9 @@
 import express from 'express';
 import rssService from './services/rssService';
 import videoService from './services/videoService';
-import config from './utilities/config';
 
 const app = express();
 const port = process.env.NODE_ENV === 'development' ? 3000 : 80;
-
-app.use('/covers', express.static(`${config.workingDirectory}/`));
 
 app.get('/video/:videoId', async (req, res) => {
   const result = await videoService.getStreamUrl(req.params.videoId);
@@ -20,7 +17,12 @@ app.get('/video/:videoId', async (req, res) => {
 
 app.get('/:id', async (req, res) => {
   try {
-    const rss = await rssService.getRssFeed(req.params.id, req.query.title?.toString());
+    const rss = await rssService.getRssFeed(
+      req.params.id,
+      req.query.title?.toString(),
+      req.query.image?.toString(),
+      req.get('host')
+    );
 
     if (rss === '') {
       res.status(404).send(`Could not find user with name ${req.params.id}`);
