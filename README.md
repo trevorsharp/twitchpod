@@ -37,18 +37,20 @@ Create a file named `docker-compose.yml` with the contents above.
 
 ## Adding Podcast Feeds
 
-Add podcast feeds to your podcast app of choice using the following URL format `http://hostname/username`
+Add podcast feeds to your podcast app of choice using the following URL format:
+
+`http://hostname/username`
 
 - `hostname` is the domain name or static IP address that reaches the docker container on port 80
 - `username` is the Twitch username of the desired streamer
 
 ### Optional URL Query Parameters
 
-- `title` - Frmatted title for the podcast feed (e.g. `Username%20VODs`)
+- `title` - Frmatted title for the podcast feed (e.g. `Twitch%20User%20VODs`)
 - `image` - URL of an image for the podcast feed's cover art (e.g. `https%3A%2F%2Fexample.com%2FpathToImage.jpg`)
 
 **Note** All optional parameters must be URL encoded. You can use a tool such as [this one](https://www.urlencoder.org) to encode your parameters
 
-## Example
+## Example Feed URL
 
-`http://yourdomain.com/hasanabi?title=HasanAbi%20VODs&image=https%3A%2F%2Fstatic-cdn.jtvnw.net%2Fjtv_user_pictures%2F0347a9aa-e396-49a5-b0f1-31261704bab8-profile_image-300x300.jpeg`
+`http://yourdomain.com/twitchuser?title=Twitch%20User%20VODs&image=https%3A%2F%2Fexample.com%2FpathToImage.jpg`
