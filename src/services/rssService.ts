@@ -25,8 +25,7 @@ class RssService {
     });
 
     videos.forEach((video) => {
-      const itunesDuration =
-        new Date(video.date).getTime() < Date.now() - 86400000 ? video.duration : undefined;
+      const itunesDuration = video.duration;
 
       rssFeed.addItem({
         title: video.title,
