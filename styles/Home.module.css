@@ -4,12 +4,13 @@
 
 .main {
   min-height: 100vh;
-  padding: 4rem 0;
+  padding: 4rem 0 8rem;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 4rem;
 }
 
 .footer {
@@ -51,7 +52,6 @@
 }
 
 .description {
-  margin: 4rem 0;
   line-height: 1.5;
   font-size: 1.5rem;
 }
@@ -79,7 +79,6 @@
   background-color: inherit;
   border-color: inherit;
   border-style: solid;
-  font-weight: 300;
 }
 
 .field:focus {
@@ -93,4 +92,34 @@
   background-color: inherit;
   cursor: pointer;
   margin-top: 0.2rem;
+}
+
+.userContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.userImage {
+  border-radius: 5px;
+}
+
+.userTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  margin-right: 0.5rem;
+}
+
+.podcastIconContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.errorText {
+  font-size: 1.2rem;
+  color: #eb3445;
 }

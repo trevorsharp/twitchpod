@@ -9,9 +9,7 @@ COPY ./package.json ./package.json
 COPY ./yarn.lock ./yarn.lock
 RUN yarn
 
-COPY ./src ./src
-COPY ./tsconfig.json ./tsconfig.json
+COPY . .
 RUN yarn build
 
-ENV NODE_ENV=production
-CMD node /app/build/index.js
+CMD ["yarn", "start"]

@@ -30,7 +30,7 @@ services:
     container_name: twitchpod
     restart: unless_stopped
     ports:
-      - 80:80
+      - 80:3000
     environment:
       - "TWITCH_API_CLIENT_ID="
       - "TWITCH_API_SECRET="
