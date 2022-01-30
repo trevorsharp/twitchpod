@@ -5,3 +5,9 @@ export interface Video {
   description: string;
   duration?: number;
 }
+
+export interface UserData {
+  displayName: string;
+  profileImageUrl: string;
+  description: string;
+}

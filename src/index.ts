@@ -17,15 +17,14 @@ app.get('/video/:videoId', async (req, res) => {
 
 app.get('/:id', async (req, res) => {
   try {
-    const rss = await rssService.getRssFeed(
-      req.params.id,
-      req.query.title?.toString(),
-      req.query.image?.toString(),
-      req.get('host')
-    );
+    const username = req.params.id?.trim()?.toLowerCase();
+
+    if (!username) return res.status(400).send('Missing usename');
+
+    const rss = await rssService.getRssFeed(username, req.get('host'));
 
     if (rss === '') {
-      res.status(404).send(`Could not find user with name ${req.params.id}`);
+      res.status(404).send(`Could not find user with name ${username}`);
       return;
     }
 

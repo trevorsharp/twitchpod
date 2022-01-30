@@ -1,53 +1,57 @@
-import { Video } from '../types';
-import { spawn } from 'child_process';
+import axios from 'axios';
+import { UserData } from '../types';
+import cache from '../utilities/cache';
 
 class TwitchService {
-  static getVideosForUser = async (username: string): Promise<Video[]> => {
-    const data = await this.spawnChild(['videos', username, '--limit', '100']);
-    const dataByLine = data.split('\n').filter((x) => x !== '');
+  static getTwitchUserData = async (username: string): Promise<UserData | undefined> => {
+    const cacheKey = `twitch-api-user-data-${username}`;
+    const cacheResult = cache.get(cacheKey);
+    if (cacheResult) return cacheResult;
 
-    const videos: Video[] = [];
+    const token = await this.getToken();
 
-    for (let i = 0; i < dataByLine.length; i++) {
-      if (/Video ([0-9]+)/.test(dataByLine[i]))
-        videos.push({
-          id: RegExp.$1,
-          title: dataByLine[++i],
-          description: dataByLine[++i],
-          date: /Published ([^\s]*) @ ([^\s]*)/.test(dataByLine[++i])
-            ? `${RegExp.$1}T${RegExp.$2}Z`
-            : '',
-          duration: /Length: ([0-9]+) h ([0-9]+) min/.test(dataByLine[i])
-            ? parseInt(RegExp.$1) * 3600 + parseInt(RegExp.$2) * 60
-            : /Length: ([0-9]+) min ([0-9]+) sec/.test(dataByLine[i])
-            ? parseInt(RegExp.$1) * 60 + parseInt(RegExp.$2)
-            : /Length: ([0-9]+) sec/.test(dataByLine[i])
-            ? parseInt(RegExp.$1)
-            : undefined,
-        });
+    const headers: any = { Authorization: `Bearer ${token}` };
+    headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
+    const response = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, {
+      headers,
+    });
+
+    if (response.status !== 200 || !response.data.data || response.data.data.length === 0) {
+      console.log(`Twitch API Error: ${response.statusText}`);
+      return undefined;
     }
 
-    return videos;
+    const rawUserData = response.data.data[0];
+
+    const userData = {
+      displayName: rawUserData.display_name,
+      profileImageUrl: rawUserData.profile_image_url,
+      description: rawUserData.description,
+    };
+
+    cache.set(cacheKey, userData, 86400);
+
+    return userData;
   };
 
-  static getVideoUrl = async (videoId: string): Promise<string> => {
-    const data = await this.spawnChild(['info', videoId]);
+  private static getToken = async (): Promise<string> => {
+    const cacheKey = `twitch-api-token`;
+    const cacheResult = cache.get(cacheKey);
+    if (cacheResult) return cacheResult as string;
 
-    return /chunked ([^\n]*)/.test(data) ? RegExp.$1 : '';
-  };
-
-  private static spawnChild = async (args: string[]) => {
-    const child = spawn('twitch-dl', args);
-
-    let data = '';
-    for await (const chunk of child.stdout) data += chunk;
-
-    await new Promise((resolve, reject) => child.on('close', resolve));
-
-    return data.replace(
-      /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
-      ''
+    const response = await axios.post(
+      `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`
     );
+
+    if (response.status !== 200) {
+      console.log(`Twitch API Error: ${response.statusText}`);
+      return '';
+    }
+
+    const token = response.data.access_token;
+    cache.set(cacheKey, token, response.data.expires_in - 300);
+
+    return token;
   };
 }
 

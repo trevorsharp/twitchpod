@@ -1,44 +1,49 @@
 import { Podcast } from 'podcast';
-import { Video } from '../types';
-import twitchService from './twitchService';
+import { Video, UserData } from '../types';
 import cache from '../utilities/cache';
+import videoService from './videoService';
+import twichService from './twitchService';
 
 class RssService {
-  static getRssFeed = async (
-    username: string,
-    title: string | undefined,
-    imageUrl: string | undefined,
-    hostname: string | undefined
-  ) => {
-    const cacheKey = `videos-${username}`;
-    const videos: Video[] = cache.get(cacheKey) ?? (await twitchService.getVideosForUser(username));
+  static getRssFeed = async (username: string, hostname: string | undefined): Promise<string> => {
+    const cacheKey = `rss-${username}`;
+    const cacheResult = cache.get(cacheKey);
+    if (cacheResult) return cacheResult;
 
-    cache.set(cacheKey, videos, 300);
+    const videos: Video[] = await videoService.getVideosForUser(username);
+    const userData: UserData | undefined = await twichService.getTwitchUserData(username);
+
+    if (!userData) return '';
 
     const rssFeed = new Podcast({
-      title: title ?? username,
-      description: title ?? username,
-      author: title ?? username,
+      title: userData.displayName,
+      description: userData.description,
+      author: userData.displayName,
       feedUrl: `http://${hostname}/${username}`,
       siteUrl: `https://twitch.tv/${username}`,
-      imageUrl,
+      imageUrl: userData.profileImageUrl,
     });
 
     videos.forEach((video) => {
       const itunesDuration = video.duration;
+      const url = `https://www.twitch.tv/videos/${video.id}`;
 
       rssFeed.addItem({
         title: video.title,
         itunesTitle: video.title,
-        description: video.description,
+        description: [video.description, url].join('\n\n'),
         date: new Date(video.date),
         enclosure: { url: `http://${hostname}/video/${video.id}`, type: 'video/mp4' },
-        url: `https://www.twitch.tv/videos/${video.id}`,
+        url,
         itunesDuration,
       });
     });
 
-    return rssFeed.buildXml();
+    const rss = rssFeed.buildXml();
+
+    cache.set(username, rss, 300);
+
+    return rss;
   };
 }
 
