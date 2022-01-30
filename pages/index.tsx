@@ -77,8 +77,10 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          Generate podcast feeds for your <br />
-          favorite <span className={styles.purple}>Twitch</span> streamers
+          <span className={styles.line}>Generate podcast feeds for your&nbsp;</span>
+          <span className={styles.line}>
+            favorite <span className={styles.purple}>Twitch</span> streamers
+          </span>
         </p>
 
         <form className={styles.formContainer} onSubmit={(e) => onSubmit(e)}>
@@ -100,54 +102,57 @@ const Home: NextPage = () => {
           </button>
         </form>
 
-        {user && (
-          <div className={styles.userContainer}>
-            <Image
-              className={styles.userImage}
-              src={user.profileImageUrl}
-              alt="Profile"
-              width={50}
-              height={50}
-              layout="fixed"
-            />
-            <p className={styles.userTitle}>{user.displayName}</p>
-            <div className={styles.podcastIconContainer}>
-              <a href={`podcast://${window.location.host}/${user.username}`}>
+        <div className={styles.resultContainer}>
+          {user && (
+            <>
+              <div className={styles.userContainer}>
                 <Image
-                  src="/applepodcasts.svg"
-                  alt="apple podcasts"
-                  height={40}
-                  width={40}
+                  className={styles.userImage}
+                  src={user.profileImageUrl}
+                  alt="Profile"
+                  width={50}
+                  height={50}
                   layout="fixed"
                 />
-              </a>
-              <a href={`pktc://subscribe/${window.location.host}/${user.username}`}>
-                <Image
-                  className={styles.clickable}
-                  src="/pocketcasts.svg"
-                  alt="pocket casts"
-                  height={40}
-                  width={40}
-                  layout="fixed"
-                  onClick={() => {}}
-                />
-              </a>
-              <a href={`/${user.username}`}>
-                <Image
-                  className={styles.clickable}
-                  src="/rss.svg"
-                  alt="rss"
-                  height={40}
-                  width={40}
-                  layout="fixed"
-                  onClick={() => {}}
-                />
-              </a>
-            </div>
-          </div>
-        )}
-
-        {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
+                <p className={styles.userTitle}>{user.displayName}</p>
+              </div>
+              <div className={styles.podcastIconContainer}>
+                <a href={`podcast://${window.location.host}/${user.username}`}>
+                  <Image
+                    src="/applepodcasts.svg"
+                    alt="apple podcasts"
+                    height={40}
+                    width={40}
+                    layout="fixed"
+                  />
+                </a>
+                <a href={`pktc://subscribe/${window.location.host}/${user.username}`}>
+                  <Image
+                    className={styles.clickable}
+                    src="/pocketcasts.svg"
+                    alt="pocket casts"
+                    height={40}
+                    width={40}
+                    layout="fixed"
+                    onClick={() => {}}
+                  />
+                </a>
+                <a href={`/${user.username}`}>
+                  <Image
+                    className={styles.clickable}
+                    src="/rss.svg"
+                    alt="rss"
+                    height={40}
+                    width={40}
+                    layout="fixed"
+                    onClick={() => {}}
+                  />
+                </a>
+              </div>
+            </>
+          )}
+          {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
+        </div>
       </main>
 
       <footer className={styles.footer}>

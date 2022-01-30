@@ -4,7 +4,7 @@
 
 .main {
   min-height: 100vh;
-  padding: 4rem 0 8rem;
+  padding: 4rem 0 6rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -49,6 +49,7 @@
 .title,
 .description {
   text-align: center;
+  max-width: 32rem;
 }
 
 .description {
@@ -69,7 +70,7 @@
 
 .field {
   max-width: 100%;
-  width: 300px;
+  width: 20rem;
   border-radius: 8px;
   position: relative;
   transition: 0.3s all;
@@ -79,11 +80,12 @@
   background-color: inherit;
   border-color: inherit;
   border-style: solid;
+  border-width: 2px;
+  border-color: #9146ff;
 }
 
-.field:focus {
-  border-color: #9146ff;
-  outline: none;
+.field::placeholder {
+  color: #888;
 }
 
 .button {
@@ -106,7 +108,7 @@
 }
 
 .userTitle {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: bold;
   margin: 0;
   margin-right: 0.5rem;
@@ -122,4 +124,17 @@
 .errorText {
   font-size: 1.2rem;
   color: #eb3445;
+  text-align: center;
+}
+
+.resultContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  min-height: 8rem;
+}
+
+.line {
+  display: inline-block;
 }

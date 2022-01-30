@@ -24,3 +24,10 @@ a {
   --background: black;
   --foreground: white;
 }
+
+@media (max-width: 450px) {
+  html,
+  body {
+    font-size: 12px;
+  }
+}
