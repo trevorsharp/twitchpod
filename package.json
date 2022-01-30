@@ -1,5 +1,5 @@
 {
-  "name": "twitch-podcast-feeds",
+  "name": "twitchpod",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Trevor Sharp <sharp.trevor@me.com>",
