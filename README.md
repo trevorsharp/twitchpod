@@ -1,4 +1,4 @@
-# twitch-podcast-feeds
+# twitchPOD
 
 Create podcast feeds from Twitch VODs
 
@@ -25,9 +25,9 @@ To run this application using docker:
 ```
 version: '3'
 services:
-  twitch-podcast-feeds:
-    image: trevorsharp/twitch-podcast-feeds:latest
-    container_name: twitch-podcast-feeds
+  twitchpod:
+    image: trevorsharp/twitchpod:latest
+    container_name: twitchpod
     restart: unless_stopped
     ports:
       - 80:80
