@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, ReactNode } from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import Head from 'next/head';
@@ -40,7 +40,10 @@ const Home: NextPage = () => {
     setTimeout(() => animatePlaceholderText(), timeout);
   };
 
+  const input = useRef<HTMLInputElement | null>(null);
+
   useEffect(animatePlaceholderText, []);
+  useEffect(() => input.current?.focus(), []);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,6 +88,7 @@ const Home: NextPage = () => {
 
         <form className={styles.formContainer} onSubmit={(e) => onSubmit(e)}>
           <input
+            ref={input}
             className={styles.field}
             type="text"
             placeholder={inputPlaceholder}
@@ -113,6 +117,8 @@ const Home: NextPage = () => {
                   width={50}
                   height={50}
                   layout="fixed"
+                  placeholder="blur"
+                  blurDataURL="/loading.gif"
                 />
                 <p className={styles.userTitle}>{user.displayName}</p>
               </div>
