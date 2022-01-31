@@ -49,19 +49,16 @@ const Home: NextPage = () => {
     e.preventDefault();
     if (usernameInput !== '') {
       setIsLoading(true);
+      setUser(undefined);
+      setErrorMessage(undefined);
+
       fetch(`/api/user/${usernameInput}`)
         .then(async (response) => {
           if (response.status !== 200) throw await response.text();
           return response.json();
         })
-        .then((data) => {
-          setUser(data);
-          setErrorMessage(undefined);
-        })
-        .catch((error: string) => {
-          setUser(undefined);
-          setErrorMessage(error);
-        })
+        .then((data) => setUser(data))
+        .catch((error: string) => setErrorMessage(error))
         .finally(() => setIsLoading(false));
     }
   };
@@ -118,7 +115,7 @@ const Home: NextPage = () => {
                   height={50}
                   layout="fixed"
                   placeholder="blur"
-                  blurDataURL="/loading.gif"
+                  blurDataURL="/placeholder.webp"
                 />
                 <p className={styles.userTitle}>{user.displayName}</p>
               </div>
