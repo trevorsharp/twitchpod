@@ -132,7 +132,10 @@
   flex-direction: column;
   align-items: center;
   gap: 2rem;
-  max-height: 11rem;
+}
+
+.resultContainer.fixedHeight {
+  height: 11rem;
 }
 
 .line {

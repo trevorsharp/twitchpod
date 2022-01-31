@@ -33,6 +33,7 @@ const Home: NextPage = () => {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [copiedText, setCopiedText] = useState<string | undefined>(undefined);
+  const [didShowResults, setDidShowResults] = useState<boolean>(false);
 
   const input = useRef<HTMLInputElement | null>(null);
 
@@ -51,7 +52,10 @@ const Home: NextPage = () => {
         })
         .then((data) => setUser(data))
         .catch((error: string) => setErrorMessage(error))
-        .finally(() => setIsLoading(false));
+        .finally(() => {
+          setIsLoading(false);
+          setDidShowResults(true);
+        });
     }
   };
 
@@ -152,7 +156,7 @@ const Home: NextPage = () => {
           </button>
         </form>
 
-        <div className={styles.resultContainer}>
+        <div className={`${styles.resultContainer} ${didShowResults ? styles.fixedHeight : ''}`}>
           {user && (
             <>
               <div className={styles.userContainer}>
