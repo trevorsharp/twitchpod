@@ -97,7 +97,7 @@ const Home: NextPage = () => {
 
   const copyRssLink = () => {
     navigator.clipboard.writeText(`http://${getRssLink()}`);
-    setCopiedText('Copied link RSS feed 🎉');
+    setCopiedText('Copied link to RSS feed 🎉');
     setTimeout(() => setCopiedText(undefined), 2000);
   };
 
