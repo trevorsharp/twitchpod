@@ -26,7 +26,7 @@ export const getRssFeed = async (
       itunesTitle: video.title,
       description: video.url,
       date: new Date(video.date),
-      enclosure: { url: `http://${hostname}/video/${video.id}`, type: 'video/mp4' },
+      enclosure: { url: `http://${hostname}/api/video/${video.id}`, type: 'video/mp4' },
       url: video.url,
       itunesDuration,
     });
