@@ -7,6 +7,21 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { User } from '../services/twitchService';
 
+const topStreamers = [
+  'xQcOW',
+  'HasanAbi',
+  'GeorgeNotFound',
+  'Mizkif',
+  'tommyinnit',
+  'shroud',
+  'Sykkuno',
+  'DisguisedToast',
+  'pokimane',
+  'Amouranth',
+  'dakotaz',
+  'GMHikaru',
+];
+
 const Home: NextPage = () => {
   const router = useRouter();
 
@@ -15,34 +30,6 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-
-  const topStreamers = [
-    'xQcOW',
-    'HasanAbi',
-    'GeorgeNotFound',
-    'Mizkif',
-    'tommyinnit',
-    'shroud',
-    'Sykkuno',
-    'DisguisedToast',
-    'pokimane',
-    'Amouranth',
-    'dakotaz',
-    'GMHikaru',
-  ];
-
-  const animatePlaceholderText = () => {
-    const streamerList = topStreamers.sort(() => 0.5 - Math.random());
-    let timeout = 0;
-    streamerList.forEach((streamer) => {
-      streamer.split('').forEach((_, i) => {
-        setTimeout(() => setInputPlaceholder(streamer.substring(0, i + 1)), timeout);
-        timeout += 200;
-      });
-      timeout += 2000;
-    });
-    setTimeout(() => animatePlaceholderText(), timeout);
-  };
 
   const input = useRef<HTMLInputElement | null>(null);
 
@@ -65,7 +52,20 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleInitialValue = () => {
+  const animatePlaceholderText = () => {
+    const streamerList = topStreamers.sort(() => 0.5 - Math.random());
+    let timeout = 0;
+    streamerList.forEach((streamer) => {
+      streamer.split('').forEach((_, i) => {
+        setTimeout(() => setInputPlaceholder(streamer.substring(0, i + 1)), timeout);
+        timeout += 200;
+      });
+      timeout += 2000;
+    });
+    setTimeout(() => animatePlaceholderText(), timeout);
+  };
+
+  const handleInitialParameter = () => {
     const username =
       router.query.username &&
       typeof router.query.username !== 'string' &&
@@ -78,8 +78,16 @@ const Home: NextPage = () => {
     input.current?.focus();
   };
 
+  const prefetchAssets = () => {
+    setTimeout(() => {
+      fetch('/loading.gif');
+      fetch('/placeholder.webp');
+    }, 2000);
+  };
+
   useEffect(animatePlaceholderText, []);
-  useEffect(handleInitialValue, [router.query]);
+  useEffect(handleInitialParameter, [router.query]);
+  useEffect(prefetchAssets, []);
 
   return (
     <div className={styles.container}>
@@ -116,11 +124,15 @@ const Home: NextPage = () => {
             placeholder={inputPlaceholder}
             onChange={(e) => setUsernameInput(e.target.value)}
             value={usernameInput}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
           />
           <button className={styles.button} type="submit">
             <Image
               src={isLoading ? '/loading.gif' : '/next.svg'}
-              alt="Vercel Logo"
+              alt="Next"
               width={35}
               height={35}
               layout="fixed"
@@ -139,8 +151,6 @@ const Home: NextPage = () => {
                   width={50}
                   height={50}
                   layout="fixed"
-                  placeholder="blur"
-                  blurDataURL="/placeholder.webp"
                 />
                 <p className={styles.userTitle}>{user.displayName}</p>
               </div>
