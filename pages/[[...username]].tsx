@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { User } from '../services/twitchService';
+import { Quality } from '../utilities/types';
 
 const topStreamers = [
   'xQcOW',
@@ -27,9 +28,11 @@ const Home: NextPage = () => {
 
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('');
   const [usernameInput, setUsernameInput] = useState<string>('');
+  const [qualitySelection, setQualitySelection] = useState<Quality>(Quality.Maximum);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+  const [copiedText, setCopiedText] = useState<string | undefined>(undefined);
 
   const input = useRef<HTMLInputElement | null>(null);
 
@@ -88,6 +91,15 @@ const Home: NextPage = () => {
   useEffect(animatePlaceholderText, []);
   useEffect(handleInitialParameter, [router.query]);
   useEffect(prefetchAssets, []);
+
+  const getRssLink = () =>
+    `${window.location.host}/api/${user?.username}?quality=${qualitySelection}`;
+
+  const copyRssLink = () => {
+    navigator.clipboard.writeText(`http://${getRssLink()}`);
+    setCopiedText('Copied link RSS feed 🎉');
+    setTimeout(() => setCopiedText(undefined), 2000);
+  };
 
   return (
     <div className={styles.container}>
@@ -154,8 +166,54 @@ const Home: NextPage = () => {
                 />
                 <p className={styles.userTitle}>{user.displayName}</p>
               </div>
+              <div className={styles.qualityContainer}>
+                <label className={styles.clickable}>
+                  <input
+                    type="radio"
+                    id="Maximum"
+                    name="quality"
+                    value={Quality.Maximum}
+                    checked={qualitySelection === Quality.Maximum}
+                    onClick={() => setQualitySelection(Quality.Maximum)}
+                  />
+                  <span>Best Video</span>
+                </label>
+                <label className={styles.clickable}>
+                  <input
+                    type="radio"
+                    id="720p"
+                    name="quality"
+                    value={Quality.P720}
+                    checked={qualitySelection === Quality.P720}
+                    onClick={() => setQualitySelection(Quality.P720)}
+                  />
+                  <span>720p</span>
+                </label>
+                <label className={styles.clickable}>
+                  <input
+                    type="radio"
+                    id="480p"
+                    name="quality"
+                    value={Quality.P480}
+                    checked={qualitySelection === Quality.P480}
+                    onClick={() => setQualitySelection(Quality.P480)}
+                  />
+                  <span>480p</span>
+                </label>
+                <label className={styles.clickable}>
+                  <input
+                    type="radio"
+                    id="Audio"
+                    name="quality"
+                    value={Quality.Audio}
+                    checked={qualitySelection === Quality.Audio}
+                    onClick={() => setQualitySelection(Quality.Audio)}
+                  />
+                  <span>Audio Only</span>
+                </label>
+              </div>
               <div className={styles.podcastIconContainer}>
-                <a href={`podcast://${window.location.host}/api/${user.username}`}>
+                <a href={`podcast://${getRssLink()}`}>
                   <Image
                     src="/applepodcasts.svg"
                     alt="apple podcasts"
@@ -164,29 +222,26 @@ const Home: NextPage = () => {
                     layout="fixed"
                   />
                 </a>
-                <a href={`pktc://subscribe/${window.location.host}/api/${user.username}`}>
+                <a href={`pktc://subscribe/${getRssLink()}`}>
                   <Image
-                    className={styles.clickable}
                     src="/pocketcasts.svg"
                     alt="pocket casts"
                     height={40}
                     width={40}
                     layout="fixed"
-                    onClick={() => {}}
                   />
                 </a>
-                <a href={`/api/${user.username}`}>
-                  <Image
-                    className={styles.clickable}
-                    src="/rss.svg"
-                    alt="rss"
-                    height={40}
-                    width={40}
-                    layout="fixed"
-                    onClick={() => {}}
-                  />
-                </a>
+                <Image
+                  className={styles.clickable}
+                  src="/rss.svg"
+                  alt="rss"
+                  height={40}
+                  width={40}
+                  layout="fixed"
+                  onClick={copyRssLink}
+                />
               </div>
+              {copiedText && <p className={styles.copiedText}>{copiedText}</p>}
             </>
           )}
           {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
