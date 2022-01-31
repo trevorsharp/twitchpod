@@ -1,13 +1,34 @@
 import { spawn } from 'child_process';
 import cache from '../utilities/cache';
-import { StatusWrapper } from '../utilities/types';
+import { StatusWrapper, Quality } from '../utilities/types';
 
-export const getStreamUrl = async (videoId: string): Promise<StatusWrapper<string>> => {
-  const cacheKey = `video-url-${videoId}`;
+export const getStream = async (
+  videoId: string,
+  quality: Quality
+): Promise<StatusWrapper<string>> => {
+  const { body: streamUrl, errorMessage, statusCode } = await getStreamUrl(videoId, quality);
+
+  if (errorMessage || !streamUrl) return { errorMessage, statusCode };
+
+  const response = await fetch(streamUrl);
+
+  if (response.status !== 200)
+    return { errorMessage: 'Failed to fetch content stream', statusCode: 500 };
+
+  const baseStreamUrl = streamUrl.replace('index-dvr.m3u8', '');
+
+  const m3u8 = (await response.text()).replaceAll(/([0-9]+\.ts)/gi, `${baseStreamUrl}$&`);
+
+  return { body: m3u8 };
+};
+
+const getStreamUrl = async (videoId: string, quality: Quality): Promise<StatusWrapper<string>> => {
+  const cacheKey = `video-url-${videoId}-${quality}`;
   const cacheResult = cache.get(cacheKey);
   if (cacheResult) return { body: cacheResult as string };
 
-  const videoUrl = await getVideoUrl(videoId);
+  const videoUrl = await getVideoUrl(videoId, quality);
+  console.log(videoUrl);
 
   if (videoUrl === '')
     return { errorMessage: `Video not found with id ${videoId}`, statusCode: 404 };
@@ -17,10 +38,26 @@ export const getStreamUrl = async (videoId: string): Promise<StatusWrapper<strin
   return { body: videoUrl };
 };
 
-const getVideoUrl = async (videoId: string): Promise<string> => {
+const getVideoUrl = async (videoId: string, quality: Quality): Promise<string> => {
   const data = await spawnChild(['info', videoId]);
 
-  return /chunked ([^\n]*)/.test(data) ? RegExp.$1 : '';
+  let resolution = 'chunked';
+
+  switch (quality) {
+    case Quality.P720:
+      resolution = '720p[0-9]{2}';
+      break;
+    case Quality.P480:
+      resolution = '480p[0-9]{2}';
+      break;
+    case Quality.Audio:
+      resolution = '160p[0-9]{2}';
+  }
+
+  const regex = new RegExp(`${resolution} ([^\n]*)`, 'gi');
+  const match = data.match(regex);
+  console.log(match);
+  return match && match.length > 0 ? match[0].replace(regex, '$1') : '';
 };
 
 const spawnChild = async (args: string[]) => {

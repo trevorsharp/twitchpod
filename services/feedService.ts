@@ -1,10 +1,11 @@
 import { Podcast } from 'podcast';
 import { getUserData } from './twitchService';
-import { StatusWrapper } from '../utilities/types';
+import { StatusWrapper, Quality } from '../utilities/types';
 
 export const getRssFeed = async (
   username: string,
-  hostname: string | undefined
+  hostname: string,
+  quality: Quality
 ): Promise<StatusWrapper<string>> => {
   const { body: user, errorMessage, statusCode } = await getUserData(username);
   if (errorMessage || !user) return { errorMessage, statusCode };
@@ -26,7 +27,10 @@ export const getRssFeed = async (
       itunesTitle: video.title,
       description: video.url,
       date: new Date(video.date),
-      enclosure: { url: `http://${hostname}/api/video/${video.id}`, type: 'video/mp4' },
+      enclosure: {
+        url: `http://${hostname}/api/video/${video.id}?quality=${quality}`,
+        type: quality === Quality.Audio ? 'audio/aac' : 'video/mp4',
+      },
       url: video.url,
       itunesDuration,
     });
