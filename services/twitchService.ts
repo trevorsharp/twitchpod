@@ -19,16 +19,34 @@ export type User = {
   videos: Video[];
 };
 
-export const getUserData = async (username: string): Promise<StatusWrapper<User>> => {
-  const cacheKey = `twitch-api-user-data-${username.trim().toLowerCase()}`;
-  const cacheResult = cache.get(cacheKey);
-  if (cacheResult) return { body: cacheResult };
+export const getUserData = async (rawUsername: string): Promise<StatusWrapper<User>> => {
+  const username = rawUsername.trim().toLowerCase();
 
   if (!username.match(new RegExp(/^[a-z0-9][a-z0-9_]{0,24}$/gi)))
     return {
       errorMessage: `Sorry, "${username}" is not a valid Twitch username 🤷`,
       statusCode: 400,
     };
+
+  const { body: rawUserData, errorMessage, statusCode } = await getRawUserData(username);
+  if (errorMessage || !rawUserData) return { errorMessage, statusCode };
+
+  const user: User = {
+    id: rawUserData.id,
+    username: rawUserData.login,
+    displayName: rawUserData.display_name,
+    profileImageUrl: rawUserData.profile_image_url,
+    description: rawUserData.description,
+    videos: await getVideos(rawUserData.id),
+  };
+
+  return { body: user };
+};
+
+const getRawUserData = async (username: string): Promise<StatusWrapper<any>> => {
+  const cacheKey = `twitch-api-raw-user-data-${username}`;
+  const cacheResult = cache.get(cacheKey);
+  if (cacheResult) return { body: cacheResult };
 
   const { body: token, errorMessage: tokenError } = await getToken();
   if (tokenError || !token) return { errorMessage: tokenError, statusCode: 500 };
@@ -48,21 +66,16 @@ export const getUserData = async (username: string): Promise<StatusWrapper<User>
 
   const rawUserData = data.data[0];
 
-  const user: User = {
-    id: rawUserData.id,
-    username: rawUserData.login,
-    displayName: rawUserData.display_name,
-    profileImageUrl: rawUserData.profile_image_url,
-    description: rawUserData.description,
-    videos: await getVideos(rawUserData.id),
-  };
+  cache.set(cacheKey, rawUserData, 86400);
 
-  cache.set(cacheKey, user, 86400);
-
-  return { body: user };
+  return { body: rawUserData };
 };
 
 const getVideos = async (userId: string): Promise<Video[]> => {
+  const cacheKey = `twitch-api-user-videos-${userId}`;
+  const cacheResult = cache.get(cacheKey);
+  if (cacheResult) return cacheResult as Video[];
+
   const { body: token, errorMessage: tokenError } = await getToken();
   if (tokenError || !token) return [];
 
@@ -74,13 +87,17 @@ const getVideos = async (userId: string): Promise<Video[]> => {
 
   if (!data || !data.data || data.data.length === 0) return [];
 
-  return data.data.map((v: any) => ({
+  const videos = data.data.map((v: any) => ({
     id: v.id,
     title: v.title,
     date: v.published_at,
     url: v.url,
     duration: getDuration(v.duration),
   }));
+
+  cache.set(cacheKey, videos, 500);
+
+  return videos;
 };
 
 const getToken = async (): Promise<StatusWrapper<string>> => {
