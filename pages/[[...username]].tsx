@@ -46,12 +46,7 @@ const Home: NextPage = () => {
 
   const input = useRef<HTMLInputElement | null>(null);
 
-  const onSubmit = (
-    e: React.FormEvent<HTMLFormElement> | undefined = undefined,
-    customValue: string | undefined = undefined
-  ) => {
-    e?.preventDefault();
-
+  const onSubmit = (customValue: string | undefined = undefined) => {
     const username = customValue ?? usernameInput;
 
     if (username !== '') {
@@ -77,8 +72,9 @@ const Home: NextPage = () => {
       router.query.username.length > 0
         ? router.query.username[0]
         : '';
+
     setUsernameInput(username);
-    onSubmit(undefined, username);
+    onSubmit(username);
     input.current?.focus();
   };
 
@@ -106,7 +102,13 @@ const Home: NextPage = () => {
           </span>
         </p>
 
-        <form className={styles.formContainer} onSubmit={(e) => onSubmit(e)}>
+        <form
+          className={styles.formContainer}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+        >
           <input
             ref={input}
             className={styles.field}
