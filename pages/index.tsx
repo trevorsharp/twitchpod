@@ -68,7 +68,8 @@ const Home: NextPage = () => {
       <Head>
         <title>twitchPOD</title>
         <meta name="description" content="Create podcast feeds from Twitch VODs" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="112x112" href="/apple-touch-icon.png" />
       </Head>
 
       <main className={styles.main}>
