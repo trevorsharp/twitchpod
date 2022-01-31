@@ -1,11 +1,15 @@
-import React, { useEffect, useState, useRef, ReactNode } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState, useRef } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { User } from '../services/twitchService';
 
 const Home: NextPage = () => {
+  const router = useRouter();
+
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('');
   const [usernameInput, setUsernameInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -42,17 +46,20 @@ const Home: NextPage = () => {
 
   const input = useRef<HTMLInputElement | null>(null);
 
-  useEffect(animatePlaceholderText, []);
-  useEffect(() => input.current?.focus(), []);
+  const onSubmit = (
+    e: React.FormEvent<HTMLFormElement> | undefined = undefined,
+    customValue: string | undefined = undefined
+  ) => {
+    e?.preventDefault();
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (usernameInput !== '') {
+    const username = customValue ?? usernameInput;
+
+    if (username !== '') {
       setIsLoading(true);
       setUser(undefined);
       setErrorMessage(undefined);
 
-      fetch(`/api/user/${usernameInput}`)
+      fetch(`/api/user/${username}`)
         .then(async (response) => {
           if (response.status !== 200) throw await response.text();
           return response.json();
@@ -62,6 +69,21 @@ const Home: NextPage = () => {
         .finally(() => setIsLoading(false));
     }
   };
+
+  const handleInitialValue = () => {
+    const username =
+      router.query.username &&
+      typeof router.query.username !== 'string' &&
+      router.query.username.length > 0
+        ? router.query.username[0]
+        : '';
+    setUsernameInput(username);
+    onSubmit(undefined, username);
+    input.current?.focus();
+  };
+
+  useEffect(animatePlaceholderText, []);
+  useEffect(handleInitialValue, [router.query]);
 
   return (
     <div className={styles.container}>
@@ -121,7 +143,7 @@ const Home: NextPage = () => {
                 <p className={styles.userTitle}>{user.displayName}</p>
               </div>
               <div className={styles.podcastIconContainer}>
-                <a href={`podcast://${window.location.host}/${user.username}`}>
+                <a href={`podcast://${window.location.host}/api/${user.username}`}>
                   <Image
                     src="/applepodcasts.svg"
                     alt="apple podcasts"
@@ -130,7 +152,7 @@ const Home: NextPage = () => {
                     layout="fixed"
                   />
                 </a>
-                <a href={`pktc://subscribe/${window.location.host}/${user.username}`}>
+                <a href={`pktc://subscribe/${window.location.host}/api/${user.username}`}>
                   <Image
                     className={styles.clickable}
                     src="/pocketcasts.svg"
@@ -141,7 +163,7 @@ const Home: NextPage = () => {
                     onClick={() => {}}
                   />
                 </a>
-                <a href={`/${user.username}`}>
+                <a href={`/api/${user.username}`}>
                   <Image
                     className={styles.clickable}
                     src="/rss.svg"
