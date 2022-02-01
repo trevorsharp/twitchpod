@@ -12,6 +12,10 @@
   align-items: center;
 }
 
+.main > * {
+  margin: 1rem 0;
+}
+
 .footer {
   display: flex;
   flex: 1;
@@ -49,7 +53,6 @@
 .description {
   text-align: center;
   max-width: 32rem;
-  margin: 0;
 }
 
 .description {
