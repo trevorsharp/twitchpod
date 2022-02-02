@@ -20,9 +20,11 @@ a {
   --foreground: black;
 }
 
-[data-theme='dark'] {
-  --background: black;
-  --foreground: white;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: black;
+    --foreground: white;
+  }
 }
 
 @media (max-width: 450px) {
