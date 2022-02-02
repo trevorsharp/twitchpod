@@ -15,9 +15,9 @@ export const getStream = async (
   if (response.status !== 200)
     return { errorMessage: 'Failed to fetch content stream', statusCode: 500 };
 
-  const baseStreamUrl = streamUrl.replace('index-dvr.m3u8', '');
+  const baseStreamUrl = streamUrl.replace(/index[^\.]*\.m3u8/i, '');
 
-  const m3u8 = (await response.text()).replaceAll(/([0-9]+\.ts)/gi, `${baseStreamUrl}$&`);
+  const m3u8 = (await response.text()).replaceAll(/\n([0-9]+[^\.]*\.ts)/gi, `\n${baseStreamUrl}$1`);
 
   return { body: m3u8 };
 };
