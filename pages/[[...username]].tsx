@@ -37,15 +37,15 @@ const Home: NextPage = () => {
 
   const input = useRef<HTMLInputElement | null>(null);
 
-  const onSubmit = (customValue: string | undefined = undefined) => {
-    const username = customValue ?? usernameInput;
+  const onSubmit = (username: string | undefined = undefined) => {
+    username = username ?? usernameInput;
 
     if (username !== '') {
       setIsLoading(true);
       setUser(undefined);
       setErrorMessage(undefined);
 
-      fetch(`/api/user/${username}`)
+      fetch(`/api/users/${username}`)
         .then(async (response) => {
           if (response.status !== 200) throw await response.text();
           return response.json();
@@ -97,7 +97,9 @@ const Home: NextPage = () => {
   useEffect(prefetchAssets, []);
 
   const getRssLink = () =>
-    `${window.location.host}/api/${user?.username}?quality=${qualitySelection}`;
+    `${window.location.host}/${user?.username}/feed${
+      qualitySelection != Quality.Maximum ? `?quality=${qualitySelection}` : ''
+    }`;
 
   const copyRssLink = () => {
     navigator.clipboard.writeText(`http://${getRssLink()}`);
@@ -178,6 +180,7 @@ const Home: NextPage = () => {
                     name="quality"
                     value={Quality.Maximum}
                     checked={qualitySelection === Quality.Maximum}
+                    onChange={() => {}}
                     onClick={() => setQualitySelection(Quality.Maximum)}
                   />
                   <span>Best Video</span>
@@ -189,6 +192,7 @@ const Home: NextPage = () => {
                     name="quality"
                     value={Quality.P720}
                     checked={qualitySelection === Quality.P720}
+                    onChange={() => {}}
                     onClick={() => setQualitySelection(Quality.P720)}
                   />
                   <span>720p</span>
@@ -200,6 +204,7 @@ const Home: NextPage = () => {
                     name="quality"
                     value={Quality.P480}
                     checked={qualitySelection === Quality.P480}
+                    onChange={() => {}}
                     onClick={() => setQualitySelection(Quality.P480)}
                   />
                   <span>480p</span>
@@ -211,6 +216,7 @@ const Home: NextPage = () => {
                     name="quality"
                     value={Quality.Audio}
                     checked={qualitySelection === Quality.Audio}
+                    onChange={() => {}}
                     onClick={() => setQualitySelection(Quality.Audio)}
                   />
                   <span>Audio Only</span>

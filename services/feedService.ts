@@ -28,7 +28,9 @@ export const getRssFeed = async (
       description: video.url,
       date: new Date(video.date),
       enclosure: {
-        url: `http://${hostname}/api/video/${video.id}?quality=${quality}`,
+        url: `http://${hostname}/videos/${video.id}${
+          quality != Quality.Maximum ? `?quality=${quality}` : ''
+        }`,
         type: quality === Quality.Audio ? 'audio/aac' : 'video/mp4',
       },
       url: video.url,
