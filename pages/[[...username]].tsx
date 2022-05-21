@@ -9,7 +9,6 @@ import { User } from '../services/twitchService';
 import { Quality } from '../utilities/types';
 
 const topStreamers = [
-  'xQcOW',
   'HasanAbi',
   'GeorgeNotFound',
   'Mizkif',
@@ -21,6 +20,7 @@ const topStreamers = [
   'Amouranth',
   'dakotaz',
   'GMHikaru',
+  'Myth',
 ];
 
 const Home: NextPage = () => {
