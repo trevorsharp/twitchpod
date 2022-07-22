@@ -1,4 +1,4 @@
-import { useState, forwardRef, useEffect } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
 
 const topStreamers = [
   'HasanAbi',

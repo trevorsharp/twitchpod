@@ -40,4 +40,4 @@ const getRssFeed = async (
   return rssFeed.buildXml();
 };
 
-export { getRssFeed, Quality };
+export { getRssFeed };

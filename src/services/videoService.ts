@@ -1,6 +1,8 @@
 import { spawn } from 'child_process';
-import cache from '../cache';
+import NodeCache from 'node-cache';
 import { Quality } from '../types';
+
+const cache = new NodeCache({ checkperiod: 120 });
 
 const getStream = async (videoId: string, quality: Quality): Promise<string> => {
   const streamUrl = await getStreamUrl(videoId, quality);

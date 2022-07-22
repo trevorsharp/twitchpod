@@ -1,5 +1,7 @@
-import cache from '../cache';
+import NodeCache from 'node-cache';
 import { User, Video } from '../types';
+
+const cache = new NodeCache({ checkperiod: 120 });
 
 type RawUserData = {
   id: string;

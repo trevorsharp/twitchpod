@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getRssFeed } from '../../services/feedService';
-import { Quality } from '../../services/feedService';
+import { Quality } from '../../types';
 
 const getRssFeedForUser = async (req: NextApiRequest, res: NextApiResponse<string>) => {
   const qualityParam = req.query.quality;
