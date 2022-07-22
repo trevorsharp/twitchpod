@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: 'Build and Push Docker Image'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,7 +39,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build And Push
+      - name: Build and Push
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -47,3 +48,31 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ steps.prep.outputs.tags }}
+
+  deploy:
+    name: 'Deploy to Server'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/server.key
+          chmod 600 ~/.ssh/server.key
+          cat >> ~/.ssh/config <<END
+          Host server
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/server.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SERVER_SSH_USER }}
+          SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SSH_HOST: ${{ secrets.SERVER_SSH_HOST }}
+
+      - name: Pull Docker Image
+        run: ssh server 'cd ${{ secrets.SERVER_FILE_PATH }} && docker-compose pull'
+
+      - name: Recreate Containers
+        run: ssh server 'cd ${{ secrets.SERVER_FILE_PATH }} && docker-compose up -d --force-recreate'
