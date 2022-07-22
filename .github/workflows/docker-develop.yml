@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: "Build and Push Docker Image"
+    name: 'Build and Push Docker Image'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,7 +50,8 @@ jobs:
           tags: ${{ steps.prep.outputs.tags }}
 
   deploy:
-    name: "Deploy to Server"
+    name: 'Deploy to Server'
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH
