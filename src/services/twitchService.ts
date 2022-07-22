@@ -1,13 +1,5 @@
 import cache from '../cache';
-
-type Video = {
-  id: string;
-  title: string;
-  date: string;
-  description: string;
-  duration: number;
-  url: string;
-};
+import { User, Video } from '../types';
 
 type RawUserData = {
   id: string;
@@ -15,15 +7,6 @@ type RawUserData = {
   display_name: string;
   profile_image_url: string;
   description: string;
-};
-
-type User = {
-  id: string;
-  username: string;
-  displayName: string;
-  profileImageUrl: string;
-  description: string;
-  videos: Video[];
 };
 
 const getUserData = async (rawUsername: string): Promise<User> => {
@@ -140,4 +123,3 @@ const getDuration = (duration: string): number => {
 };
 
 export { getUserData };
-export type { User };

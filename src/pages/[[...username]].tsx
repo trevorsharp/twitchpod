@@ -2,8 +2,8 @@ import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import HomePage from '../components/HomePage';
 import { getUserData } from '../services/twitchService';
-import type { User } from '../services/twitchService';
 import Head from 'next/head';
+import type { User } from '../types';
 
 type UserPageProps = {
   user?: User;

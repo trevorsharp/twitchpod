@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "format": "yarn prettier --write './src/**/*.{js,jsx,ts,tsx}'"
+    "lint": "tsc && next lint",
+    "prettier": "prettier --write './src/**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.6",
