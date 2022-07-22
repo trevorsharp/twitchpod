@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Quality } from '../types';
 
-type RssLinkProps = {
+const RssLinks = ({
+  host,
+  username,
+  quality,
+}: {
   host: string;
   username: string;
   quality: Quality;
-};
-
-const RssLinks = ({ host, username, quality }: RssLinkProps) => {
+}) => {
   const [copiedText, setCopiedText] = useState<string>('');
 
   const getRssLink = () =>
@@ -34,4 +36,5 @@ const RssLinks = ({ host, username, quality }: RssLinkProps) => {
     </div>
   );
 };
+
 export default RssLinks;

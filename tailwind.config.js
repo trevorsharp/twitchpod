@@ -13,6 +13,10 @@ module.exports = {
       screens: {
         normal: '450px',
       },
+      fontSize: {
+        mobile: '14px',
+        normal: '16px',
+      },
     },
   },
   plugins: [],
