@@ -1,6 +1,6 @@
 import { Podcast } from 'podcast';
 import { Quality } from '../types';
-import { getUserData } from './twitchService';
+import { getUserData, getVideos } from './twitchService';
 
 const getRssFeed = async (
   username: string,
@@ -8,6 +8,7 @@ const getRssFeed = async (
   quality: Quality
 ): Promise<string> => {
   const user = await getUserData(username);
+  const videos = await getVideos(user.id);
 
   const rssFeed = new Podcast({
     title: user.displayName,
@@ -18,7 +19,7 @@ const getRssFeed = async (
     imageUrl: user.profileImageUrl,
   });
 
-  user.videos.forEach((video) => {
+  videos.forEach((video) => {
     const itunesDuration = video.duration;
 
     rssFeed.addItem({

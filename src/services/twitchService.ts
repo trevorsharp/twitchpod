@@ -25,7 +25,6 @@ const getUserData = async (rawUsername: string): Promise<User> => {
     displayName: rawUserData.display_name,
     profileImageUrl: rawUserData.profile_image_url,
     description: rawUserData.description,
-    videos: await getVideos(rawUserData.id),
   };
 
   return user;
@@ -124,4 +123,4 @@ const getDuration = (duration: string): number => {
   return seconds;
 };
 
-export { getUserData };
+export { getUserData, getVideos };

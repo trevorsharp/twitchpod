@@ -11,7 +11,6 @@ type User = {
   displayName: string;
   profileImageUrl: string;
   description: string;
-  videos: Video[];
 };
 
 type Video = {
