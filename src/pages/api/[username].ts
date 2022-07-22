@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getRssFeed } from '../../services/feedService';
-import { Quality } from '../../utilities/types';
+import { Quality } from '../../services/feedService';
 
 const getRssFeedForUser = async (req: NextApiRequest, res: NextApiResponse<string>) => {
   const qualityParam = req.query.quality;
@@ -9,16 +9,9 @@ const getRssFeedForUser = async (req: NextApiRequest, res: NextApiResponse<strin
   if (typeof qualityParam === 'string' && !isNaN(parseInt(qualityParam)))
     quality = parseInt(qualityParam);
 
-  const { body, errorMessage, statusCode } = await getRssFeed(
-    req.query.username as string,
-    req.headers.host ?? '',
-    quality
-  );
-
-  if (errorMessage || !body)
-    return res.status(statusCode ?? 500).send(errorMessage ?? 'Unexpeded Error');
-
-  res.status(200).json(body);
+  getRssFeed(req.query.username as string, req.headers.host ?? '', quality)
+    .then((rssFeed) => res.status(200).send(rssFeed))
+    .catch((e) => res.status(500).send(e ?? 'Unexpected Error'));
 };
 
 export default getRssFeedForUser;

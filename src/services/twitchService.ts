@@ -1,35 +1,21 @@
-import cache from '../utilities/cache';
-import { StatusWrapper } from '../utilities/types';
+import cache from '../cache';
+import { User, Video } from '../types';
 
-type Video = {
+type RawUserData = {
   id: string;
-  title: string;
-  date: string;
+  login: string;
+  display_name: string;
+  profile_image_url: string;
   description: string;
-  duration: number;
-  url: string;
 };
 
-export type User = {
-  id: string;
-  username: string;
-  displayName: string;
-  profileImageUrl: string;
-  description: string;
-  videos: Video[];
-};
-
-export const getUserData = async (rawUsername: string): Promise<StatusWrapper<User>> => {
+const getUserData = async (rawUsername: string): Promise<User> => {
   const username = rawUsername.trim().toLowerCase();
 
   if (!username.match(new RegExp(/^[a-z0-9][a-z0-9_]{0,24}$/gi)))
-    return {
-      errorMessage: `Sorry, "${username}" is not a valid Twitch username 🤷`,
-      statusCode: 400,
-    };
+    throw `Sorry, "${username}" is not a valid Twitch username 🤷`;
 
-  const { body: rawUserData, errorMessage, statusCode } = await getRawUserData(username);
-  if (errorMessage || !rawUserData) return { errorMessage, statusCode };
+  const rawUserData = await getRawUserData(username);
 
   const user: User = {
     id: rawUserData.id,
@@ -40,16 +26,15 @@ export const getUserData = async (rawUsername: string): Promise<StatusWrapper<Us
     videos: await getVideos(rawUserData.id),
   };
 
-  return { body: user };
+  return user;
 };
 
-const getRawUserData = async (username: string): Promise<StatusWrapper<any>> => {
+const getRawUserData = async (username: string): Promise<RawUserData> => {
   const cacheKey = `twitch-api-raw-user-data-${username}`;
   const cacheResult = cache.get(cacheKey);
-  if (cacheResult) return { body: cacheResult };
+  if (cacheResult) return cacheResult as RawUserData;
 
-  const { body: token, errorMessage: tokenError } = await getToken();
-  if (tokenError || !token) return { errorMessage: tokenError, statusCode: 500 };
+  const token = await getToken();
 
   const headers: any = { Authorization: `Bearer ${token}` };
   headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
@@ -57,18 +42,18 @@ const getRawUserData = async (username: string): Promise<StatusWrapper<any>> => 
     headers,
   });
 
-  if (response.status !== 200) return { errorMessage: response.statusText, statusCode: 500 };
+  if (response.status !== 200) throw response.statusText;
 
   const data = await response.json();
 
   if (!data || !data.data || data.data.length === 0)
-    return { errorMessage: `Sorry, we could not find the user "${username}" 🙁`, statusCode: 404 };
+    throw `Sorry, we could not find the user "${username}" 🙁`;
 
   const rawUserData = data.data[0];
 
   cache.set(cacheKey, rawUserData, 86400);
 
-  return { body: rawUserData };
+  return rawUserData as RawUserData;
 };
 
 const getVideos = async (userId: string): Promise<Video[]> => {
@@ -76,8 +61,7 @@ const getVideos = async (userId: string): Promise<Video[]> => {
   const cacheResult = cache.get(cacheKey);
   if (cacheResult) return cacheResult as Video[];
 
-  const { body: token, errorMessage: tokenError } = await getToken();
-  if (tokenError || !token) return [];
+  const token = await getToken();
 
   const headers: any = { Authorization: `Bearer ${token}` };
   headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
@@ -100,23 +84,22 @@ const getVideos = async (userId: string): Promise<Video[]> => {
   return videos;
 };
 
-const getToken = async (): Promise<StatusWrapper<string>> => {
+const getToken = async (): Promise<string> => {
   const cacheKey = `twitch-api-token`;
   const cacheResult = cache.get(cacheKey);
-  if (cacheResult) return { body: cacheResult as string };
+  if (cacheResult) return cacheResult as string;
 
   const data = await fetch(
     `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
     { method: 'POST' }
   ).then((response) => response.json());
 
-  if (!data || !data.access_token || !data.expires_in)
-    return { errorMessage: 'Could not get Twith API token' };
+  if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
 
   const token = data.access_token;
   cache.set(cacheKey, token, data.expires_in - 300);
 
-  return { body: token };
+  return token;
 };
 
 const getDuration = (duration: string): number => {
@@ -138,3 +121,5 @@ const getDuration = (duration: string): number => {
 
   return seconds;
 };
+
+export { getUserData };

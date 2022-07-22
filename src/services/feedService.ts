@@ -1,14 +1,13 @@
 import { Podcast } from 'podcast';
+import { Quality } from '../types';
 import { getUserData } from './twitchService';
-import { StatusWrapper, Quality } from '../utilities/types';
 
-export const getRssFeed = async (
+const getRssFeed = async (
   username: string,
   hostname: string,
   quality: Quality
-): Promise<StatusWrapper<string>> => {
-  const { body: user, errorMessage, statusCode } = await getUserData(username);
-  if (errorMessage || !user) return { errorMessage, statusCode };
+): Promise<string> => {
+  const user = await getUserData(username);
 
   const rssFeed = new Podcast({
     title: user.displayName,
@@ -38,5 +37,7 @@ export const getRssFeed = async (
     });
   });
 
-  return { body: rssFeed.buildXml() };
+  return rssFeed.buildXml();
 };
+
+export { getRssFeed, Quality };
