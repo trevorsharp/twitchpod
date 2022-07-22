@@ -1,40 +1,33 @@
 import { spawn } from 'child_process';
-import cache from '../utilities/cache';
-import { StatusWrapper, Quality } from '../utilities/types';
+import cache from '../cache';
+import { Quality } from '../types';
 
-export const getStream = async (
-  videoId: string,
-  quality: Quality
-): Promise<StatusWrapper<string>> => {
-  const { body: streamUrl, errorMessage, statusCode } = await getStreamUrl(videoId, quality);
-
-  if (errorMessage || !streamUrl) return { errorMessage, statusCode };
+const getStream = async (videoId: string, quality: Quality): Promise<string> => {
+  const streamUrl = await getStreamUrl(videoId, quality);
 
   const response = await fetch(streamUrl);
 
-  if (response.status !== 200)
-    return { errorMessage: 'Failed to fetch content stream', statusCode: 500 };
+  if (response.status !== 200) throw 'Failed to fetch content stream';
 
   const baseStreamUrl = streamUrl.replace(/index[^\.]*\.m3u8/i, '');
 
   const m3u8 = (await response.text()).replaceAll(/\n([0-9]+[^\.]*\.ts)/gi, `\n${baseStreamUrl}$1`);
 
-  return { body: m3u8 };
+  return m3u8;
 };
 
-const getStreamUrl = async (videoId: string, quality: Quality): Promise<StatusWrapper<string>> => {
+const getStreamUrl = async (videoId: string, quality: Quality): Promise<string> => {
   const cacheKey = `video-url-${videoId}-${quality}`;
   const cacheResult = cache.get(cacheKey);
-  if (cacheResult) return { body: cacheResult as string };
+  if (cacheResult) return cacheResult as string;
 
   const videoUrl = await getVideoUrl(videoId, quality);
 
-  if (videoUrl === '')
-    return { errorMessage: `Video not found with id ${videoId}`, statusCode: 404 };
+  if (videoUrl === '') throw `Video not found with id ${videoId}`;
 
   cache.set(cacheKey, videoUrl, 300);
 
-  return { body: videoUrl };
+  return videoUrl;
 };
 
 const getVideoUrl = async (videoId: string, quality: Quality): Promise<string> => {
@@ -56,7 +49,7 @@ const getVideoUrl = async (videoId: string, quality: Quality): Promise<string> =
   const regex = new RegExp(`${resolution} ([^\n]*)`, 'gi');
   const match = data.match(regex);
 
-  return match && match.length > 0 ? match[0].replace(regex, '$1') : '';
+  return match && match.length > 0 ? match[0]?.replace(regex, '$1') ?? '' : '';
 };
 
 const spawnChild = async (args: string[]) => {
@@ -72,3 +65,5 @@ const spawnChild = async (args: string[]) => {
     ''
   );
 };
+
+export { getStream };
