@@ -80,14 +80,18 @@ const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
               <div className="flex flex-col gap-6 items-center">
                 {user && (
                   <>
-                    <div className="flex gap-4 items-center">
+                    <a
+                      className="flex gap-4 items-center"
+                      target="_new"
+                      href={`https://twitch.tv/${user.username}`}
+                    >
                       <img
                         className="rounded-full w-16 h-16"
                         src={user.profileImageUrl}
                         alt="Profile"
                       />
                       <p className="text-4xl font-bold">{user.displayName}</p>
-                    </div>
+                    </a>
                     <QualitySelection selection={qualitySelection} onSelect={setQualitySelection} />
                     <RssLinks
                       host={host ?? window.location.host}
