@@ -53,9 +53,9 @@ const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
           <div className="flex flex-col items-center gap-16 text-center max-w-md">
             <h1 className="text-7xl font-bold">
               Welcome to{' '}
-              <Link className="text-twitch" href="/">
-                twitchPOD
-              </Link>
+              <span className="text-twitch">
+                <Link href="/">twitchPOD</Link>
+              </span>
             </h1>
             <p className="text-2xl">
               <span className="inline-block">Generate podcast feeds for your&nbsp;</span>
