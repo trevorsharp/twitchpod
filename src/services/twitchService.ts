@@ -95,7 +95,7 @@ const getToken = async (): Promise<string> => {
     { method: 'POST' }
   ).then((response) => response.json());
 
-  if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
+  if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twitch API token';
 
   const token = data.access_token;
   cache.set(cacheKey, token, data.expires_in - 300);
