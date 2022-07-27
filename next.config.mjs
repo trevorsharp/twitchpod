@@ -12,9 +12,6 @@ function defineNextConfig(config) {
 
 export default defineNextConfig({
   reactStrictMode: true,
-  images: {
-    domains: ['static-cdn.jtvnw.net'],
-  },
   async rewrites() {
     return {
       beforeFiles: [

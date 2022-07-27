@@ -11,6 +11,7 @@ type User = {
   displayName: string;
   profileImageUrl: string;
   description: string;
+  url: string;
 };
 
 type Video = {
@@ -18,7 +19,7 @@ type Video = {
   title: string;
   date: string;
   description: string;
-  duration: number;
+  duration: number | undefined;
   url: string;
 };
 

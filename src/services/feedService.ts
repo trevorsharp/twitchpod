@@ -14,14 +14,12 @@ const getRssFeed = async (
     title: user.displayName,
     description: user.description,
     author: user.displayName,
-    feedUrl: `http://${hostname}/${username}`,
-    siteUrl: `https://twitch.tv/${username}`,
+    feedUrl: `http://${hostname}/${username}/feed`,
+    siteUrl: user.url,
     imageUrl: user.profileImageUrl,
   });
 
-  videos.forEach((video) => {
-    const itunesDuration = video.duration;
-
+  videos.forEach((video) =>
     rssFeed.addItem({
       title: video.title,
       itunesTitle: video.title,
@@ -34,9 +32,9 @@ const getRssFeed = async (
         type: quality === Quality.Audio ? 'audio/aac' : 'video/mp4',
       },
       url: video.url,
-      itunesDuration,
-    });
-  });
+      itunesDuration: video.duration,
+    })
+  );
 
   return rssFeed.buildXml();
 };

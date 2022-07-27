@@ -3,9 +3,7 @@ import MainPage from '../components/MainPage';
 import type { MainPageProps } from '../components/MainPage';
 import { getUserData } from '../services/twitchService';
 
-const UserPage = ({ user, host, errorMessage }: MainPageProps) => (
-  <MainPage user={user} host={host} errorMessage={errorMessage} />
-);
+const UserPage = (props: MainPageProps) => <MainPage {...props} />;
 
 const getServerSideProps: GetServerSideProps = async (context) => {
   const { query, req } = context;
@@ -21,9 +19,9 @@ const getServerSideProps: GetServerSideProps = async (context) => {
   if (username) {
     try {
       const user = await getUserData(username);
-      return { props: { user, host } };
+      return { props: { user, host, username } };
     } catch (errorMessage) {
-      return { props: { errorMessage } };
+      return { props: { errorMessage, username } };
     }
   }
 

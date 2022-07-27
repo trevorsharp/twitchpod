@@ -3,14 +3,6 @@ import { User, Video } from '../types';
 
 const cache = new NodeCache({ checkperiod: 120 });
 
-type RawUserData = {
-  id: string;
-  login: string;
-  display_name: string;
-  profile_image_url: string;
-  description: string;
-};
-
 const getUserData = async (rawUsername: string): Promise<User> => {
   const username = rawUsername.trim().toLowerCase();
 
@@ -25,27 +17,18 @@ const getUserData = async (rawUsername: string): Promise<User> => {
     displayName: rawUserData.display_name,
     profileImageUrl: rawUserData.profile_image_url,
     description: rawUserData.description,
+    url: `https://twitch.tv/${rawUserData.login}`,
   };
 
   return user;
 };
 
-const getRawUserData = async (username: string): Promise<RawUserData> => {
+const getRawUserData = async (username: string): Promise<any> => {
   const cacheKey = `twitch-api-raw-user-data-${username}`;
   const cacheResult = cache.get(cacheKey);
-  if (cacheResult) return cacheResult as RawUserData;
+  if (cacheResult) return cacheResult;
 
-  const token = await getToken();
-
-  const headers: any = { Authorization: `Bearer ${token}` };
-  headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
-  const response = await fetch(`https://api.twitch.tv/helix/users?login=${username}`, {
-    headers,
-  });
-
-  if (response.status !== 200) throw response.statusText;
-
-  const data = await response.json();
+  const data = await getTwitch(`https://api.twitch.tv/helix/users?login=${username}`);
 
   if (!data || !data.data || data.data.length === 0)
     throw `Sorry, we could not find the user "${username}" 🙁`;
@@ -54,7 +37,7 @@ const getRawUserData = async (username: string): Promise<RawUserData> => {
 
   cache.set(cacheKey, rawUserData, 86400);
 
-  return rawUserData as RawUserData;
+  return rawUserData;
 };
 
 const getVideos = async (userId: string): Promise<Video[]> => {
@@ -62,22 +45,31 @@ const getVideos = async (userId: string): Promise<Video[]> => {
   const cacheResult = cache.get(cacheKey);
   if (cacheResult) return cacheResult as Video[];
 
-  const token = await getToken();
-
-  const headers: any = { Authorization: `Bearer ${token}` };
-  headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
-  const data = await fetch(`https://api.twitch.tv/helix/videos?user_id=${userId}`, {
-    headers,
-  }).then((response) => response.json());
+  const data = await getTwitch(`https://api.twitch.tv/helix/videos?user_id=${userId}`);
 
   if (!data || !data.data || data.data.length === 0) return [];
 
-  const videos = data.data.map((v: any) => ({
-    id: v.id,
-    title: v.title,
-    date: v.published_at,
-    url: v.url,
-    duration: getDuration(v.duration),
+  const currentStreamData = await getTwitch(
+    `https://api.twitch.tv/helix/streams?user_id=${userId}`
+  );
+
+  const currentStream =
+    currentStreamData && currentStreamData.data && currentStreamData.data.length > 0
+      ? currentStreamData.data[0]
+      : undefined;
+
+  const videos = data.data.map((video: any) => ({
+    id: video.id,
+    title: video.title,
+    date: video.published_at,
+    url: video.url,
+    duration:
+      currentStream &&
+      Math.abs(
+        new Date(currentStream.started_at).getTime() - new Date(video.published_at).getTime()
+      ) < 900000
+        ? undefined
+        : getDuration(video.duration),
   }));
 
   cache.set(cacheKey, videos, 500);
@@ -85,42 +77,42 @@ const getVideos = async (userId: string): Promise<Video[]> => {
   return videos;
 };
 
-const getToken = async (): Promise<string> => {
+const getTwitch = async (url: string): Promise<any> => {
   const cacheKey = `twitch-api-token`;
-  const cacheResult = cache.get(cacheKey);
-  if (cacheResult) return cacheResult as string;
+  let token = cache.get(cacheKey);
 
-  const data = await fetch(
-    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
-    { method: 'POST' }
-  ).then((response) => response.json());
+  if (!token) {
+    const data = await fetch(
+      `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
+      { method: 'POST' }
+    ).then((response) => response.json());
 
-  if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
+    if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
 
-  const token = data.access_token;
-  cache.set(cacheKey, token, data.expires_in - 300);
-
-  return token;
-};
-
-const getDuration = (duration: string): number => {
-  const splitTime = duration
-    .replace('h', ':')
-    .replace('m', ':')
-    .replace('s', '')
-    .split(':')
-    .map((t) => parseInt(t))
-    .map((t) => (isNaN(t) ? 0 : t));
-
-  let seconds = 0;
-  let multiplier = 1;
-
-  while (splitTime.length > 0) {
-    seconds += splitTime.pop()! * multiplier;
-    multiplier *= 60;
+    token = data.access_token;
+    cache.set(cacheKey, token, data.expires_in - 300);
   }
 
-  return seconds;
+  const headers: any = { Authorization: `Bearer ${token}` };
+  headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
+  const data = await fetch(url, { headers }).then((response) => response.json());
+
+  console.log(data);
+
+  return data;
+};
+
+const getDuration = (duration: string | undefined): number => {
+  if (!duration) return 0;
+
+  const getTimePart = (letter: 'h' | 'm' | 's') =>
+    parseInt(duration.match(new RegExp('[0-9]+(?=' + letter + ')'))?.find(() => true) ?? '0');
+
+  const hours = getTimePart('h');
+  const minutes = getTimePart('m');
+  const seconds = getTimePart('s');
+
+  return hours * 3600 + minutes * 60 + seconds;
 };
 
 export { getUserData, getVideos };

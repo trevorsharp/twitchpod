@@ -11,12 +11,13 @@ import RssLinks from './RssLinks';
 import { Quality, User } from '../types';
 
 type MainPageProps = {
+  username?: string;
   user?: User;
   errorMessage?: string;
   host?: string;
 };
 
-const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
+const MainPage = ({ username, user, errorMessage, host }: MainPageProps) => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -24,7 +25,7 @@ const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
 
   const { register, handleSubmit, setFocus } = useForm({
     resolver: zodResolver(z.object({ username: z.string() })),
-    defaultValues: { username: user?.username },
+    defaultValues: { username },
   });
 
   useEffect(() => {
@@ -80,11 +81,7 @@ const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
               <div className="flex flex-col gap-6 items-center">
                 {user && (
                   <>
-                    <a
-                      className="flex gap-4 items-center"
-                      target="_new"
-                      href={`https://twitch.tv/${user.username}`}
-                    >
+                    <a className="flex gap-4 items-center" target="_new" href={user.url}>
                       <img
                         className="rounded-full w-16 h-16"
                         src={user.profileImageUrl}
