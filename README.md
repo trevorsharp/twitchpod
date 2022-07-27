@@ -30,7 +30,7 @@ services:
   twitchpod:
     image: trevorsharp/twitchpod:latest
     container_name: twitchpod
-    restart: unless_stopped
+    restart: unless-stopped
     ports:
       - 80:3000
     environment:
@@ -38,4 +38,4 @@ services:
       - "TWITCH_API_SECRET=XXXXX"
 ```
 
-Create a file named `docker-compose.yml` with the contents above. Add in yout Twitch API client id and secret.
+Create a file named `docker-compose.yml` with the contents above. Add in your Twitch API client id and secret.
