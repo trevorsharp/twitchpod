@@ -97,8 +97,6 @@ const getTwitch = async (url: string): Promise<any> => {
   headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
   const data = await fetch(url, { headers }).then((response) => response.json());
 
-  console.log(data);
-
   return data;
 };
 
