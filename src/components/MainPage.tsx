@@ -69,8 +69,8 @@ const MainPage = ({ searchText, user, errorMessage, host }: MainPageProps) => {
               <SearchInput {...register('searchText')} />
               <button type="submit">
                 <img
-                  className="w-8 h-8"
-                  src={isLoading ? '/loading.gif' : '/next.svg'}
+                  className="w-8 h-8 text-twitch"
+                  src={isLoading ? '/loading.svg' : '/next.svg'}
                   alt="Submit"
                 />
               </button>
