@@ -1,9 +1,9 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 
 const Document = () => (
-  <Html lang="en" className="h-full">
+  <Html lang="en" className="h-full normal:text-normal mobile:text-mobile text-tiny">
     <Head />
-    <body className="bg-twitch h-full m-0 p-0 normal:text-normal text-mobile">
+    <body className="bg-twitch h-full">
       <Main />
       <NextScript />
     </body>

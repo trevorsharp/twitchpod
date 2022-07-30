@@ -5,16 +5,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        twitch: '#9146ff',
+        twitch: '#9146FF',
       },
       ringWidth: {
         3: '3px',
       },
       screens: {
-        normal: '450px',
+        mobile: '340px',
+        normal: '470px',
       },
       fontSize: {
-        mobile: '14px',
+        tiny: '8px',
+        mobile: '12px',
         normal: '16px',
       },
     },
