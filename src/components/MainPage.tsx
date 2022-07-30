@@ -11,31 +11,31 @@ import RssLinks from './RssLinks';
 import { Quality, User } from '../types';
 
 type MainPageProps = {
-  username?: string;
+  searchText?: string;
   user?: User;
   errorMessage?: string;
   host?: string;
 };
 
-const MainPage = ({ username, user, errorMessage, host }: MainPageProps) => {
+const MainPage = ({ searchText, user, errorMessage, host }: MainPageProps) => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [qualitySelection, setQualitySelection] = useState<Quality>(Quality.Maximum);
 
   const { register, handleSubmit, setFocus } = useForm({
-    resolver: zodResolver(z.object({ username: z.string() })),
-    defaultValues: { username },
+    resolver: zodResolver(z.object({ searchText: z.string() })),
+    defaultValues: { searchText },
   });
 
   useEffect(() => {
-    setFocus('username');
+    setFocus('searchText');
   }, []);
 
   const onSubmit = handleSubmit((values) => {
-    if (values.username) {
+    if (values.searchText) {
       setIsLoading(true);
-      router.push(values.username, undefined, { scroll: false }).then(() => setIsLoading(false));
+      router.push(values.searchText, undefined, { scroll: false }).then(() => setIsLoading(false));
     }
   });
 
@@ -44,7 +44,6 @@ const MainPage = ({ username, user, errorMessage, host }: MainPageProps) => {
       <Head>
         <title>twitchPOD</title>
         <meta name="description" content="Create podcast feeds from Twitch VODs" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="112x112" href="/apple-touch-icon.png" />
       </Head>
@@ -67,7 +66,7 @@ const MainPage = ({ username, user, errorMessage, host }: MainPageProps) => {
           </div>
           <div className="flex flex-col gap-12 items-center transition duration-200">
             <form className="flex gap-4 items-center" onSubmit={onSubmit}>
-              <SearchInput {...register('username')} />
+              <SearchInput {...register('searchText')} />
               <button type="submit">
                 <img
                   className="w-8 h-8"
