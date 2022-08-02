@@ -64,7 +64,7 @@ const MainPage = ({ searchText, user, errorMessage, host }: MainPageProps) => {
               </span>
             </p>
           </div>
-          <div className="flex flex-col gap-12 items-center transition duration-200">
+          <div className="flex flex-col gap-12 items-center">
             <form className="flex gap-4 items-center" onSubmit={onSubmit}>
               <SearchInput {...register('searchText')} />
               <button type="submit">
