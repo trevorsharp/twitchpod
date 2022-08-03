@@ -62,7 +62,7 @@ const getVideos = async (userId: string): Promise<Video[]> => {
     id: video.id,
     title: video.title,
     date: video.published_at,
-    url: video.url,
+    url: `https://twitch.tv/videos/${video.id}`,
     duration:
       currentStream &&
       Math.abs(
