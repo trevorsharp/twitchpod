@@ -11,13 +11,12 @@ import RssLinks from './RssLinks';
 import { Quality, User } from '../types';
 
 type MainPageProps = {
-  searchText?: string;
   user?: User;
   errorMessage?: string;
   host?: string;
 };
 
-const MainPage = ({ searchText, user, errorMessage, host }: MainPageProps) => {
+const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -25,7 +24,7 @@ const MainPage = ({ searchText, user, errorMessage, host }: MainPageProps) => {
 
   const { register, handleSubmit, setFocus } = useForm({
     resolver: zodResolver(z.object({ searchText: z.string() })),
-    defaultValues: { searchText },
+    defaultValues: { searchText: user?.username },
   });
 
   useEffect(() => {
