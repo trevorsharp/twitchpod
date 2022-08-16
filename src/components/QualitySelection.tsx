@@ -51,9 +51,9 @@ const RadioButton = ({
   checked: boolean;
   onClick: () => void;
 }) => (
-  <label className="flex items-center cursor-pointer">
+  <label className="flex cursor-pointer items-center">
     <input
-      className="appearance-none peer rounded-full h-4 w-4 border-2 border-neutral-500 cursor-pointer checked:border-twitch normal:checked:ring-3 checked:ring-2 checked:ring-inset checked:ring-twitch"
+      className="peer h-4 w-4 cursor-pointer appearance-none rounded-full border-2 border-neutral-500 checked:border-twitch checked:ring-2 checked:ring-inset checked:ring-twitch normal:checked:ring-3"
       type="radio"
       name="quality"
       onChange={() => {}}
