@@ -71,7 +71,6 @@ const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
               />
             </button>
           </form>
-
           {user && (
             <div className="flex flex-col items-center gap-6">
               <a className="flex items-center gap-4" target="_new" href={user.url}>
