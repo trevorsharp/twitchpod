@@ -58,19 +58,22 @@ const getVideos = async (userId: string): Promise<Video[]> => {
       ? currentStreamData.data[0]
       : undefined;
 
-  const videos = data.data.map((video: any) => ({
-    id: video.id,
-    title: video.title,
-    date: video.published_at,
-    url: `https://twitch.tv/videos/${video.id}`,
-    duration:
-      currentStream &&
-      Math.abs(
-        new Date(currentStream.started_at).getTime() - new Date(video.published_at).getTime()
-      ) < 900000
-        ? undefined
-        : getDuration(video.duration),
-  }));
+  const videos = data.data
+    .map((video: any) => ({
+      id: video.id,
+      title: video.title,
+      date: video.published_at,
+      url: `https://twitch.tv/videos/${video.id}`,
+      duration:
+        currentStream &&
+        Math.abs(
+          new Date(currentStream.started_at).getTime() - new Date(video.published_at).getTime()
+        ) < 900000
+          ? undefined
+          : getDuration(video.duration),
+      type: video.type,
+    }))
+    .filter((video: any) => video.type === 'upload' || video.type === 'archive');
 
   cache.set(cacheKey, videos, 500);
 
