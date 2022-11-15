@@ -1,7 +1,5 @@
 # twitchPOD
 
-## ‼️ Note - There is currently an issue with the domain twitchpod.tv. You can use [twitchpod.com](https://twitchpod.com) for the time being until I can get everything sorted out. Thanks!
-
 Create podcast feeds from Twitch VODs. Go to [twitchpod.tv](https://twitchpod.tv) to check it out!
 
 ## Features
