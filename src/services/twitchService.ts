@@ -1,7 +1,5 @@
-import NodeCache from 'node-cache';
 import { User, Video } from '../types';
-
-const cache = new NodeCache({ checkperiod: 120 });
+import cacheService from './cacheService';
 
 const getUserData = async (rawUsername: string): Promise<User> => {
   const username = rawUsername.trim().toLowerCase();
@@ -25,7 +23,7 @@ const getUserData = async (rawUsername: string): Promise<User> => {
 
 const getRawUserData = async (username: string): Promise<any> => {
   const cacheKey = `twitch-api-raw-user-data-${username}`;
-  const cacheResult = cache.get(cacheKey);
+  const cacheResult = await cacheService.get(cacheKey);
   if (cacheResult) return cacheResult;
 
   const data = await getTwitch(`https://api.twitch.tv/helix/users?login=${username}`);
@@ -35,14 +33,14 @@ const getRawUserData = async (username: string): Promise<any> => {
 
   const rawUserData = data.data[0];
 
-  cache.set(cacheKey, rawUserData, 86400);
+  await cacheService.set(cacheKey, rawUserData, 86400);
 
   return rawUserData;
 };
 
 const getVideos = async (userId: string): Promise<Video[]> => {
   const cacheKey = `twitch-api-user-videos-${userId}`;
-  const cacheResult = cache.get(cacheKey);
+  const cacheResult = await cacheService.get(cacheKey);
   if (cacheResult) return cacheResult as Video[];
 
   const data = await getTwitch(`https://api.twitch.tv/helix/videos?user_id=${userId}`);
@@ -75,14 +73,14 @@ const getVideos = async (userId: string): Promise<Video[]> => {
     }))
     .filter((video: any) => video.type === 'upload' || video.type === 'archive');
 
-  cache.set(cacheKey, videos, 500);
+  await cacheService.set(cacheKey, videos, 600);
 
   return videos;
 };
 
 const getTwitch = async (url: string): Promise<any> => {
   const cacheKey = `twitch-api-token`;
-  let token = cache.get(cacheKey);
+  let token = await cacheService.get(cacheKey);
 
   if (!token) {
     const data = await fetch(
@@ -93,7 +91,7 @@ const getTwitch = async (url: string): Promise<any> => {
     if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
 
     token = data.access_token;
-    cache.set(cacheKey, token, data.expires_in - 300);
+    await cacheService.set(cacheKey, token, data.expires_in - 300);
   }
 
   const headers: any = { Authorization: `Bearer ${token}` };

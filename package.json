@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.6",
+    "@upstash/redis": "1.18.1",
     "next": "12.2.1",
     "node-cache": "5.1.2",
     "podcast": "2.0.0",

@@ -1,7 +1,6 @@
 FROM node:16-alpine
 
-RUN apk add --no-cache yarn python3 py3-pip
-RUN pip install twitch-dl
+RUN apk add --no-cache yarn
 
 WORKDIR /app
 
