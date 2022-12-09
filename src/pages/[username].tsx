@@ -6,7 +6,7 @@ import { getUserData } from '../services/twitchService';
 const UserPage = (props: MainPageProps) => <MainPage {...props} />;
 
 const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query, req } = context;
+  const { query, req, res } = context;
   const { headers } = req;
   const { host } = headers;
 
@@ -19,6 +19,7 @@ const getServerSideProps: GetServerSideProps = async (context) => {
   if (username) {
     try {
       const user = await getUserData(username);
+      res.setHeader('Cache-Control', 's-maxage=86400');
       return { props: { user, host, username } };
     } catch (errorMessage) {
       return { props: { errorMessage, username } };

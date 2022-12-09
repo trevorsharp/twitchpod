@@ -10,9 +10,10 @@ const getVideoUrl = async (req: NextApiRequest, res: NextApiResponse) => {
     quality = parseInt(qualityParam);
 
   getStream(req.query.videoId as string, quality)
-    .then((streamUrl) => {
+    .then((m3u8) => {
+      res.setHeader('Cache-Control', 's-maxage=300');
       res.setHeader('content-type', 'application/x-mpegURL');
-      res.status(200).send(streamUrl);
+      res.status(200).send(m3u8);
     })
     .catch((e) => res.status(500).send(e ?? 'Unexpected Error'));
 };

@@ -33,7 +33,7 @@ const getRawUserData = async (username: string): Promise<any> => {
 
   const rawUserData = data.data[0];
 
-  await cacheService.set(cacheKey, rawUserData, 86400);
+  await cacheService.set(cacheKey, rawUserData, 3 * 86400);
 
   return rawUserData;
 };
