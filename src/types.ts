@@ -3,6 +3,7 @@ enum Quality {
   Audio = 1,
   P480 = 2,
   P720 = 3,
+  Auto = 4,
 }
 
 type User = {

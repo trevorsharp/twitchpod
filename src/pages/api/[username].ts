@@ -9,10 +9,10 @@ const getRssFeedForUser = async (req: NextApiRequest, res: NextApiResponse<strin
   if (typeof qualityParam === 'string' && !isNaN(parseInt(qualityParam)))
     quality = parseInt(qualityParam);
 
-  getRssFeed(req.query.username as string, req.headers.host ?? '', quality)
+  return await getRssFeed(req.query.username as string, req.headers.host ?? '', quality)
     .then((rssFeed) => {
       res.setHeader('Cache-Control', 's-maxage=600');
-      res.status(200).send(rssFeed);
+      return res.status(200).send(rssFeed);
     })
     .catch((e) => res.status(500).send(e ?? 'Unexpected Error'));
 };

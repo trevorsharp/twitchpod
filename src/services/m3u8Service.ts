@@ -35,7 +35,6 @@ const getAccessToken = (videoId: string, isVod: boolean) => {
 };
 
 const getPlaylist = (videoId: string, accessToken: any, isVod: boolean): Promise<string> => {
-  console.log(accessToken);
   return fetch(
     `https://usher.ttvnw.net/${
       isVod ? 'vod' : 'api/channel/hls'
@@ -65,10 +64,11 @@ const parsePlaylist = (playlist: string) => {
   return parsedPlaylist;
 };
 
-const getVod = async (videoId: string) => {
+const getVodPlaylist = async (videoId: string) => {
   const accessToken = await getAccessToken(videoId, true);
   const playlist = await getPlaylist(videoId, accessToken, true);
-  return parsePlaylist(playlist);
+  const parsedPlaylist = parsePlaylist(playlist);
+  return [playlist, parsedPlaylist] as const;
 };
 
-export { getVod };
+export { getVodPlaylist };

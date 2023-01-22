@@ -9,11 +9,11 @@ const getVideoUrl = async (req: NextApiRequest, res: NextApiResponse) => {
   if (typeof qualityParam === 'string' && !isNaN(parseInt(qualityParam)))
     quality = parseInt(qualityParam);
 
-  getStream(req.query.videoId as string, quality)
+  return await getStream(req.query.videoId as string, quality)
     .then((m3u8) => {
       res.setHeader('Cache-Control', 's-maxage=300');
       res.setHeader('content-type', 'application/x-mpegURL');
-      res.status(200).send(m3u8);
+      return res.status(200).send(m3u8);
     })
     .catch((e) => res.status(500).send(e ?? 'Unexpected Error'));
 };
