@@ -7,35 +7,46 @@ type QualitySelectionProps = {
 
 const QualitySelection = ({ selection, onSelect }: QualitySelectionProps) => {
   return (
-    <div className="flex gap-4">
-      <RadioButton
-        id="Maximum"
-        label="Best Video"
-        value={Quality.Maximum}
-        checked={selection === Quality.Maximum}
-        onClick={() => onSelect(Quality.Maximum)}
-      />
-      <RadioButton
-        id="720p"
-        label="720p"
-        value={Quality.P720}
-        checked={selection === Quality.P720}
-        onClick={() => onSelect(Quality.P720)}
-      />
-      <RadioButton
-        id="480p"
-        label="480p"
-        value={Quality.P480}
-        checked={selection === Quality.P480}
-        onClick={() => onSelect(Quality.P480)}
-      />
-      <RadioButton
-        id="Audio"
-        label="Audio Only"
-        value={Quality.Audio}
-        checked={selection === Quality.Audio}
-        onClick={() => onSelect(Quality.Audio)}
-      />
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-center gap-4">
+        <RadioButton
+          id="Maximum"
+          label="Highest Quality"
+          value={Quality.Maximum}
+          checked={selection === Quality.Maximum}
+          onClick={() => onSelect(Quality.Maximum)}
+        />
+        <RadioButton
+          id="Auto"
+          label="Auto Quality"
+          value={Quality.Auto}
+          checked={selection === Quality.Auto}
+          onClick={() => onSelect(Quality.Auto)}
+        />
+      </div>
+      <div className="flex justify-center gap-4">
+        <RadioButton
+          id="720p"
+          label="720p"
+          value={Quality.P720}
+          checked={selection === Quality.P720}
+          onClick={() => onSelect(Quality.P720)}
+        />
+        <RadioButton
+          id="480p"
+          label="480p"
+          value={Quality.P480}
+          checked={selection === Quality.P480}
+          onClick={() => onSelect(Quality.P480)}
+        />
+        <RadioButton
+          id="Audio"
+          label="Audio Only"
+          value={Quality.Audio}
+          checked={selection === Quality.Audio}
+          onClick={() => onSelect(Quality.Audio)}
+        />
+      </div>
     </div>
   );
 };
