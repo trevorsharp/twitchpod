@@ -1,3 +1,4 @@
+import { env } from '~/env.mjs';
 import { User, Video } from '~/types';
 import cacheService from './cacheService';
 
@@ -84,7 +85,7 @@ const getTwitch = async (url: string): Promise<any> => {
 
   if (!token) {
     const data = await fetch(
-      `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
+      `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_API_CLIENT_ID}&client_secret=${env.TWITCH_API_SECRET}&grant_type=client_credentials`,
       { method: 'POST' }
     ).then((response) => response.json());
 
@@ -95,7 +96,7 @@ const getTwitch = async (url: string): Promise<any> => {
   }
 
   const headers: any = { Authorization: `Bearer ${token}` };
-  headers['Client-Id'] = process.env.TWITCH_API_CLIENT_ID;
+  headers['Client-Id'] = env.TWITCH_API_CLIENT_ID;
   const data = await fetch(url, { headers }).then((response) => response.json());
 
   return data;
