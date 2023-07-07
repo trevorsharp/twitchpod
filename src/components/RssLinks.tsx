@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { Quality } from '../types';
+import { Quality } from '~/types';
 
 type RssLinksProps = {
   host: string;

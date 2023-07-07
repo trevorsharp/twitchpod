@@ -8,32 +8,29 @@ import { z } from 'zod';
 import SearchInput from './SearchInput';
 import QualitySelection from './QualitySelection';
 import RssLinks from './RssLinks';
-import { Quality, User } from '../types';
+import { Quality } from '~/types';
+import { api } from '~/utils/api';
 
-type MainPageProps = {
-  user?: User;
-  errorMessage?: string;
-  host?: string;
-};
-
-const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
+const MainPage = () => {
   const router = useRouter();
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [qualitySelection, setQualitySelection] = useState<Quality>(Quality.Maximum);
 
-  const { register, handleSubmit, setFocus } = useForm({
+  const searchText = router.asPath.replace('/', '').replace('[username]', '');
+
+  const user = api.user.getUserData.useQuery(
+    { username: searchText },
+    { enabled: !!searchText, retry: false }
+  );
+
+  const { register, handleSubmit, setFocus, setValue } = useForm({
     resolver: zodResolver(z.object({ searchText: z.string() })),
-    defaultValues: { searchText: user?.username },
   });
 
   useEffect(() => setFocus('searchText'), []);
+  useEffect(() => setValue('searchText', searchText), [searchText]);
 
   const onSubmit = handleSubmit((values) => {
-    if (values.searchText) {
-      setIsLoading(true);
-      router.push(values.searchText, undefined, { scroll: false }).then(() => setIsLoading(false));
-    }
+    if (values.searchText) router.push(values.searchText, undefined, { scroll: false });
   });
 
   return (
@@ -58,31 +55,34 @@ const MainPage = ({ user, errorMessage, host }: MainPageProps) => {
           <SearchInput {...register('searchText')} />
           <button type="submit">
             <img
-              className="h-8 w-8 text-twitch"
-              src={isLoading ? '/loading.svg' : '/next.svg'}
+              className="text-twitch h-8 w-8"
+              src={searchText && user.isLoading ? '/loading.svg' : '/next.svg'}
               alt="Submit"
             />
           </button>
         </form>
-        {user && (
+        {user.data && (
           <div className="flex flex-col items-center gap-6">
-            <a className="flex items-center gap-4" target="_new" href={user.url}>
-              <img className="h-16 w-16 rounded-full" src={user.profileImageUrl} alt="Profile" />
-              <p className="text-4xl font-bold">{user.displayName}</p>
+            <a className="flex items-center gap-4" target="_new" href={user.data.url}>
+              <img
+                className="h-16 w-16 rounded-full"
+                src={user.data.profileImageUrl}
+                alt="Profile"
+              />
+              <p className="text-4xl font-bold">{user.data.displayName}</p>
             </a>
             <QualitySelection selection={qualitySelection} onSelect={setQualitySelection} />
             <RssLinks
-              host={host ?? window.location.host}
-              username={user.username}
+              host={window.location.host}
+              username={user.data.username}
               quality={qualitySelection}
             />
           </div>
         )}
-        {errorMessage && <p>{errorMessage}</p>}
+        {user.error && <p>{user.error.message}</p>}
       </div>
     </>
   );
 };
 
 export default MainPage;
-export type { MainPageProps };

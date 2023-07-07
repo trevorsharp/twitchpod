@@ -1,4 +1,4 @@
-import { User, Video } from '../types';
+import { User, Video } from '~/types';
 import cacheService from './cacheService';
 
 const getUserData = async (rawUsername: string): Promise<User> => {

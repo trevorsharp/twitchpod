@@ -1,5 +1,5 @@
 import { Podcast } from 'podcast';
-import { Quality } from '../types';
+import { Quality } from '~/types';
 import { getUserData, getVideos } from './twitchService';
 
 const getRssFeed = async (

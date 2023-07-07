@@ -1,4 +1,4 @@
-import { Quality } from '../types';
+import { Quality } from '~/types';
 import cacheService from './cacheService';
 import { getVodPlaylist } from './m3u8Service';
 
