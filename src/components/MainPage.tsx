@@ -25,11 +25,11 @@ const MainPage = () => {
 
   const { register, handleSubmit, setFocus, setValue } = useForm({
     resolver: zodResolver(z.object({ searchText: z.string() })),
-    defaultValues: { searchText: searchText },
+    defaultValues: { searchText },
   });
 
-  useEffect(() => setFocus('searchText'), [setFocus]);
-  useEffect(() => setValue('searchText', searchText), [setValue, searchText]);
+  useEffect(() => setFocus('searchText'), []);
+  useEffect(() => setValue('searchText', searchText), [searchText]);
 
   const onSubmit = handleSubmit(async (values) => {
     if (values.searchText) await router.push(values.searchText, undefined, { scroll: false });
@@ -74,11 +74,7 @@ const MainPage = () => {
               <p className="text-4xl font-bold">{user.data.displayName}</p>
             </a>
             <QualitySelection selection={qualitySelection} onSelect={setQualitySelection} />
-            <RssLinks
-              host={window.location.host}
-              username={user.data.username}
-              quality={qualitySelection}
-            />
+            <RssLinks username={user.data.username} quality={qualitySelection} />
           </div>
         )}
         {user.error && <p>{user.error.message}</p>}

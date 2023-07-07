@@ -51,10 +51,10 @@ const QualitySelection = ({ selection, onSelect }: QualitySelectionProps) => {
   );
 };
 
-type RadioButtonProps<T extends string | number> = {
+type RadioButtonProps<TValue extends string | number> = {
   label: string;
   id: string;
-  value: T;
+  value: TValue;
   checked: boolean;
   onClick: () => void;
 };

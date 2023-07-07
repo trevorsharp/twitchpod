@@ -3,16 +3,17 @@ import { Tooltip } from 'react-tooltip';
 import { Quality } from '~/types';
 
 type RssLinksProps = {
-  host: string;
   username: string;
   quality: Quality;
 };
 
-const RssLinks = ({ host, username, quality }: RssLinksProps) => {
+const RssLinks = ({ username, quality }: RssLinksProps) => {
   const [copiedText, setCopiedText] = useState<string>('');
 
   const getRssLink = () =>
-    `${host}/${username}/feed${quality != Quality.Maximum ? `?quality=${quality}` : ''}`;
+    `${window.location.host}/${username}/feed${
+      quality != Quality.Maximum ? `?quality=${quality}` : ''
+    }`;
 
   const copyRssLink = () => {
     void navigator.clipboard.writeText(`http://${getRssLink()}`).then(() => {
