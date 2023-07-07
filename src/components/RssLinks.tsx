@@ -15,9 +15,10 @@ const RssLinks = ({ host, username, quality }: RssLinksProps) => {
     `${host}/${username}/feed${quality != Quality.Maximum ? `?quality=${quality}` : ''}`;
 
   const copyRssLink = () => {
-    navigator.clipboard.writeText(`http://${getRssLink()}`);
-    setCopiedText('Copied link to RSS feed 🎉');
-    setTimeout(() => setCopiedText(''), 2000);
+    void navigator.clipboard.writeText(`http://${getRssLink()}`).then(() => {
+      setCopiedText('Copied link to RSS feed 🎉');
+      setTimeout(() => setCopiedText(''), 2000);
+    });
   };
 
   return (

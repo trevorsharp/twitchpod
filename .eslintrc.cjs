@@ -28,6 +28,8 @@ const config = {
     ],
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'prettier/prettier': 'error',
+    '@next/next/no-img-element': 'off',
+    'react-hooks/exhaustive-deps': 'off',
   },
 };
 

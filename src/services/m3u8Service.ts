@@ -1,5 +1,7 @@
 // Sourced from https://github.com/dudik/twitch-m3u8
 
+type AccessToken = { value: string; signature: string };
+
 const clientId = 'kimne78kx3ncx6brgo4mv6wki5h1ko';
 
 const getAccessToken = (videoId: string, isVod: boolean) => {
@@ -25,16 +27,32 @@ const getAccessToken = (videoId: string, isVod: boolean) => {
     headers: { 'Client-id': clientId },
     body: data,
   })
-    .then((response) => response.json())
+    .then(
+      (response) =>
+        response.json() as Promise<{
+          data?: {
+            videoPlaybackAccessToken?: AccessToken;
+            streamPlaybackAccessToken?: AccessToken;
+          };
+        }>
+    )
     .then((data) =>
       isVod ? data?.data?.videoPlaybackAccessToken : data?.data?.streamPlaybackAccessToken
     )
+    .then((accessToken) => {
+      if (!accessToken) throw 'Could not get Twitch access token';
+      return accessToken;
+    })
     .catch(() => {
       throw 'Could not get Twitch access token';
     });
 };
 
-const getPlaylist = (videoId: string, accessToken: any, isVod: boolean): Promise<string> => {
+const getPlaylist = (
+  videoId: string,
+  accessToken: AccessToken,
+  isVod: boolean
+): Promise<string> => {
   return fetch(
     `https://usher.ttvnw.net/${
       isVod ? 'vod' : 'api/channel/hls'
@@ -43,7 +61,7 @@ const getPlaylist = (videoId: string, accessToken: any, isVod: boolean): Promise
     }&allow_source=true&allow_audio_only=true`
   )
     .then((response) => response.text())
-    .catch((error) => {
+    .catch(() => {
       throw 'Could not get Twitch m3u8 playlist';
     });
 };

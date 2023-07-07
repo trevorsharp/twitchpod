@@ -51,21 +51,24 @@ const QualitySelection = ({ selection, onSelect }: QualitySelectionProps) => {
   );
 };
 
-type RadioButtonProps = {
+type RadioButtonProps<T extends string | number> = {
   label: string;
   id: string;
-  value: any;
+  value: T;
   checked: boolean;
   onClick: () => void;
 };
 
-const RadioButton = ({ label, ...props }: RadioButtonProps) => (
+const RadioButton = <TValue extends string | number>({
+  label,
+  ...props
+}: RadioButtonProps<TValue>) => (
   <label className="flex cursor-pointer items-center">
     <input
       className="peer h-4 w-4 cursor-pointer appearance-none rounded-full border-2 border-neutral-500 checked:border-twitch checked:ring-2 checked:ring-inset checked:ring-twitch normal:checked:ring-3"
       type="radio"
       name="quality"
-      onChange={() => {}}
+      onChange={(e) => e.stopPropagation()}
       {...props}
     />
     <span className="m-1" />

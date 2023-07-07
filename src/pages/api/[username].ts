@@ -14,7 +14,7 @@ const getRssFeedForUser = async (req: NextApiRequest, res: NextApiResponse<strin
       res.setHeader('Cache-Control', 's-maxage=600');
       return res.status(200).send(rssFeed);
     })
-    .catch((e) => res.status(500).send(e ?? 'Unexpected Error'));
+    .catch((errorMessage: string) => res.status(500).send(errorMessage ?? 'Unexpected Error'));
 };
 
 export default getRssFeedForUser;

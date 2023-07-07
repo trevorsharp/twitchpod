@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -15,7 +16,7 @@ const MainPage = () => {
   const router = useRouter();
   const [qualitySelection, setQualitySelection] = useState<Quality>(Quality.Maximum);
 
-  const searchText = router.asPath.replace('/', '').replace('[username]', '');
+  const searchText = router.asPath.replace('/', '').replace('[searchText]', '');
 
   const user = api.user.getUserData.useQuery(
     { username: searchText },
@@ -24,13 +25,14 @@ const MainPage = () => {
 
   const { register, handleSubmit, setFocus, setValue } = useForm({
     resolver: zodResolver(z.object({ searchText: z.string() })),
+    defaultValues: { searchText: searchText },
   });
 
-  useEffect(() => setFocus('searchText'), []);
-  useEffect(() => setValue('searchText', searchText), [searchText]);
+  useEffect(() => setFocus('searchText'), [setFocus]);
+  useEffect(() => setValue('searchText', searchText), [setValue, searchText]);
 
-  const onSubmit = handleSubmit((values) => {
-    if (values.searchText) router.push(values.searchText, undefined, { scroll: false });
+  const onSubmit = handleSubmit(async (values) => {
+    if (values.searchText) await router.push(values.searchText, undefined, { scroll: false });
   });
 
   return (
@@ -55,7 +57,7 @@ const MainPage = () => {
           <SearchInput {...register('searchText')} />
           <button type="submit">
             <img
-              className="text-twitch h-8 w-8"
+              className="h-8 w-8 text-twitch"
               src={searchText && user.isLoading ? '/loading.svg' : '/next.svg'}
               alt="Submit"
             />

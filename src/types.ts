@@ -19,7 +19,7 @@ type Video = {
   id: string;
   title: string;
   date: string;
-  description: string;
+  description?: string;
   duration: number | undefined;
   url: string;
 };
