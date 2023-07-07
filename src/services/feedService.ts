@@ -14,7 +14,9 @@ const getRssFeed = async (
     title: user.displayName,
     description: user.description,
     author: user.displayName,
-    feedUrl: `http://${hostname}/${username}/feed`,
+    feedUrl: `http://${hostname}/${username}/feed${
+      quality != Quality.Maximum ? `?quality=${quality}` : ''
+    }`,
     siteUrl: user.url,
     imageUrl: user.profileImageUrl,
   });

@@ -16,7 +16,11 @@ const MainPage = () => {
   const router = useRouter();
   const [qualitySelection, setQualitySelection] = useState<Quality>(Quality.Maximum);
 
-  const searchText = router.asPath.replace('/', '').replace('[searchText]', '');
+  const searchText =
+    window.location.pathname
+      .split('/')
+      .filter((segment) => segment)
+      .find(() => true) ?? '';
 
   const user = api.user.getUserData.useQuery(
     { username: searchText },
@@ -40,7 +44,7 @@ const MainPage = () => {
       <Head>
         <title>twitchPOD</title>
       </Head>
-      <div className="flex h-full min-h-fit flex-col items-center justify-center gap-16 p-8 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-16 p-8 text-center">
         <h1 className="flex flex-col text-7xl font-bold">
           <span>Welcome to</span>
           <span className="text-twitch">
