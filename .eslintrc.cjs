@@ -31,6 +31,7 @@ const config = {
     '@next/next/no-img-element': 'off',
     'react-hooks/exhaustive-deps': 'off',
   },
+  reportUnusedDisableDirectives: true,
 };
 
 module.exports = config;
