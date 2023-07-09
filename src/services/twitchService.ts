@@ -22,7 +22,7 @@ type RawVideo = {
 
 type RawCurrentStream = { started_at: string };
 
-const getUserData = async (rawUsername: string): Promise<User> => {
+const getUserData = async (rawUsername: string) => {
   const username = rawUsername.trim().toLowerCase();
 
   if (!username.match(new RegExp(/^[a-z0-9][a-z0-9_]{0,24}$/gi)))
@@ -42,7 +42,7 @@ const getUserData = async (rawUsername: string): Promise<User> => {
   return user;
 };
 
-const getRawUserData = async (username: string): Promise<RawUser> => {
+const getRawUserData = async (username: string) => {
   const cacheKey = `twitch-api-raw-user-data-${username}`;
   const cacheResult = await cacheService.get<RawUser>(cacheKey);
   if (cacheResult) return cacheResult;
@@ -63,7 +63,7 @@ const getRawUserData = async (username: string): Promise<RawUser> => {
   return rawUserData;
 };
 
-const getVideos = async (userId: string): Promise<Video[]> => {
+const getVideos = async (userId: string) => {
   const cacheKey = `twitch-api-user-videos-${userId}`;
   const cacheResult = await cacheService.get<Video[]>(cacheKey);
   if (cacheResult) return cacheResult;
@@ -84,28 +84,31 @@ const getVideos = async (userId: string): Promise<Video[]> => {
       : undefined;
 
   const videos = data.data
-    .map((video) => ({
-      id: video.id,
-      title: video.title,
-      date: video.published_at,
-      url: `https://twitch.tv/videos/${video.id}`,
-      duration:
-        currentStream &&
-        Math.abs(
-          new Date(currentStream.started_at).getTime() - new Date(video.published_at).getTime()
-        ) < 900000
-          ? undefined
-          : getDuration(video.duration),
-      type: video.type,
-    }))
-    .filter((video) => video.type === 'upload' || video.type === 'archive');
+    .filter((rawVideo) => rawVideo.type === 'upload' || rawVideo.type === 'archive')
+    .map((rawVideo) => {
+      const video: Video = {
+        id: rawVideo.id,
+        title: rawVideo.title,
+        date: rawVideo.published_at,
+        url: `https://twitch.tv/videos/${rawVideo.id}`,
+        duration:
+          currentStream &&
+          Math.abs(
+            new Date(currentStream.started_at).getTime() - new Date(rawVideo.published_at).getTime()
+          ) < 900000
+            ? undefined
+            : getDuration(rawVideo.duration),
+      };
+
+      return video;
+    });
 
   await cacheService.set(cacheKey, videos, 600);
 
   return videos;
 };
 
-const getTwitch = async <T>(url: string): Promise<T> => {
+const getTwitch = async <T>(url: string) => {
   const cacheKey = `twitch-api-token`;
   let token = await cacheService.get<string>(cacheKey);
 
@@ -129,7 +132,7 @@ const getTwitch = async <T>(url: string): Promise<T> => {
   return data;
 };
 
-const getDuration = (duration: string | undefined): number => {
+const getDuration = (duration: string | undefined) => {
   if (!duration) return 0;
 
   const getTimePart = (letter: 'h' | 'm' | 's') =>

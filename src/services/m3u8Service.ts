@@ -48,11 +48,7 @@ const getAccessToken = (videoId: string, isVod: boolean) => {
     });
 };
 
-const getPlaylist = (
-  videoId: string,
-  accessToken: AccessToken,
-  isVod: boolean
-): Promise<string> => {
+const getPlaylist = (videoId: string, accessToken: AccessToken, isVod: boolean) => {
   return fetch(
     `https://usher.ttvnw.net/${
       isVod ? 'vod' : 'api/channel/hls'

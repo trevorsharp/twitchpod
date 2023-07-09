@@ -2,10 +2,10 @@ import { Quality } from '~/types';
 import cacheService from './cacheService';
 import { getVodPlaylist } from './m3u8Service';
 
-const getStream = async (videoId: string, quality: Quality): Promise<string> => {
+const getStream = async (videoId: string, quality: Quality) => {
   const cacheKey = `playlist-data-${videoId}-${quality}`;
-  const cacheResult = await cacheService.get(cacheKey);
-  if (cacheResult) return cacheResult as string;
+  const cacheResult = await cacheService.get<string>(cacheKey);
+  if (cacheResult) return cacheResult;
 
   const playlistData = await getPlaylistData(videoId, quality);
 
@@ -16,7 +16,7 @@ const getStream = async (videoId: string, quality: Quality): Promise<string> => 
   return playlistData;
 };
 
-const getPlaylistData = async (videoId: string, quality: Quality): Promise<string> => {
+const getPlaylistData = async (videoId: string, quality: Quality) => {
   const [rawPlaylist, playlistData] = await getVodPlaylist(videoId);
 
   let playlistUrl = playlistData[0]?.url ?? '';
