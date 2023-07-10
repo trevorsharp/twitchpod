@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { z } from 'zod';
-import SearchInput from './SearchInput';
-import QualitySelection from './QualitySelection';
-import RssLinks from './RssLinks';
 import { Quality } from '~/types';
 import { api } from '~/utils/api';
+import QualitySelection from './QualitySelection';
+import RssLinks from './RssLinks';
+import SearchInput from './SearchInput';
 
 const MainPage = () => {
   const router = useRouter();

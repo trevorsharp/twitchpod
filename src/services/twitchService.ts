@@ -1,6 +1,6 @@
 import { env } from '~/env.mjs';
-import type { User, Video } from '~/types';
 import cacheService from './cacheService';
+import type { User, Video } from '~/types';
 
 type DataWrapper<T> = { data?: T };
 
