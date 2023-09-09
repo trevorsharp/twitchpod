@@ -1,14 +1,11 @@
-FROM node:lts-alpine
-
-RUN npm i -g bun
+FROM node:lts
 
 WORKDIR /app
 
 COPY ./package.json ./package.json
-COPY ./bun.lockb ./bun.lockb
-RUN bun install
+RUN npm install
 
 COPY . .
-RUN bun build
+RUN npm run build
 
-CMD ["bun", "start"]
+CMD ["npm", "run", "start"]
