@@ -1,15 +1,11 @@
-FROM node:16-alpine
-
-RUN apk add --no-cache yarn
+FROM node:lts
 
 WORKDIR /app
 
 COPY ./package.json ./package.json
-COPY ./yarn.lock ./yarn.lock
-RUN yarn
+RUN npm install
 
 COPY . .
-ENV SKIP_ENV_VALIDATION=1
-RUN yarn build
+RUN npm run build
 
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]

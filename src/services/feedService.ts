@@ -31,7 +31,7 @@ const getRssFeed = async (username: string, hostname: string, quality: Quality) 
       },
       url: video.url,
       itunesDuration: video.duration,
-    })
+    }),
   );
 
   return rssFeed.buildXml();

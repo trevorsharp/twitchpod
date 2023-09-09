@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useEffect, useState } from 'react';
 
 const topStreamers = [
@@ -26,7 +28,7 @@ const SearchInput = forwardRef<HTMLInputElement>((props, ref) => {
     streamerList.forEach((streamer) => {
       streamer.split('').forEach((_, i) => {
         animationTimeouts.push(
-          setTimeout(() => setInputPlaceholder(streamer.substring(0, i + 1)), timeout)
+          setTimeout(() => setInputPlaceholder(streamer.substring(0, i + 1)), timeout),
         );
         timeout += 200;
       });
