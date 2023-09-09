@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { Quality } from '~/types';
@@ -5,15 +7,14 @@ import { Quality } from '~/types';
 type RssLinksProps = {
   username: string;
   quality: Quality;
+  hostname: string;
 };
 
-const RssLinks = ({ username, quality }: RssLinksProps) => {
+const RssLinks = ({ username, quality, hostname }: RssLinksProps) => {
   const [copiedText, setCopiedText] = useState<string>('');
 
   const getRssLink = () =>
-    `${window.location.host}/${username}/feed${
-      quality != Quality.Maximum ? `?quality=${quality}` : ''
-    }`;
+    `${hostname}/${username}/feed${quality != Quality.Maximum ? `?quality=${quality}` : ''}`;
 
   const copyRssLink = () => {
     void navigator.clipboard.writeText(`http://${getRssLink()}`).then(() => {

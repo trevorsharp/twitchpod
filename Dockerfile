@@ -1,15 +1,14 @@
-FROM node:16-alpine
+FROM node:lts-alpine
 
-RUN apk add --no-cache yarn
+RUN npm i -g bun
 
 WORKDIR /app
 
 COPY ./package.json ./package.json
-COPY ./yarn.lock ./yarn.lock
-RUN yarn
+COPY ./bun.lockb ./bun.lockb
+RUN bun install
 
 COPY . .
-ENV SKIP_ENV_VALIDATION=1
-RUN yarn build
+RUN bun build
 
-CMD ["yarn", "start"]
+CMD ["bun", "start"]

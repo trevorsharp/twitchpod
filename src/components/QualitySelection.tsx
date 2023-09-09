@@ -1,3 +1,5 @@
+'use client';
+
 import { Quality } from '~/types';
 
 type QualitySelectionProps = {

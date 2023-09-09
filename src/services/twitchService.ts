@@ -1,4 +1,3 @@
-import { env } from '~/env.mjs';
 import cacheService from './cacheService';
 import type { User, Video } from '~/types';
 
@@ -48,7 +47,7 @@ const getRawUserData = async (username: string) => {
   if (cacheResult) return cacheResult;
 
   const data = await getTwitch<DataWrapper<RawUser[]>>(
-    `https://api.twitch.tv/helix/users?login=${username}`
+    `https://api.twitch.tv/helix/users?login=${username}`,
   );
 
   if (!data || !data.data || data.data.length === 0)
@@ -69,13 +68,13 @@ const getVideos = async (userId: string) => {
   if (cacheResult) return cacheResult;
 
   const data = await getTwitch<DataWrapper<RawVideo[]>>(
-    `https://api.twitch.tv/helix/videos?user_id=${userId}`
+    `https://api.twitch.tv/helix/videos?user_id=${userId}`,
   );
 
   if (!data || !data.data || data.data.length === 0) return [];
 
   const currentStreamData = await getTwitch<DataWrapper<RawCurrentStream[]>>(
-    `https://api.twitch.tv/helix/streams?user_id=${userId}`
+    `https://api.twitch.tv/helix/streams?user_id=${userId}`,
   );
 
   const currentStream =
@@ -94,7 +93,8 @@ const getVideos = async (userId: string) => {
         duration:
           currentStream &&
           Math.abs(
-            new Date(currentStream.started_at).getTime() - new Date(rawVideo.published_at).getTime()
+            new Date(currentStream.started_at).getTime() -
+              new Date(rawVideo.published_at).getTime(),
           ) < 900000
             ? undefined
             : getDuration(rawVideo.duration),
@@ -114,10 +114,10 @@ const getTwitch = async <T>(url: string) => {
 
   if (!token) {
     const data = await fetch(
-      `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_API_CLIENT_ID}&client_secret=${env.TWITCH_API_SECRET}&grant_type=client_credentials`,
-      { method: 'POST' }
+      `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
+      { method: 'POST' },
     ).then(
-      (response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>
+      (response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>,
     );
 
     if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
@@ -126,7 +126,10 @@ const getTwitch = async <T>(url: string) => {
     await cacheService.set(cacheKey, token, data.expires_in - 300);
   }
 
-  const headers = { Authorization: `Bearer ${token}`, 'Client-Id': env.TWITCH_API_CLIENT_ID };
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Client-Id': process.env.TWITCH_API_CLIENT_ID ?? '',
+  };
   const data = await fetch(url, { headers }).then((response) => response.json() as Promise<T>);
 
   return data;

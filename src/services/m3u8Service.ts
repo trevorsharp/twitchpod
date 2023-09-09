@@ -34,10 +34,10 @@ const getAccessToken = (videoId: string, isVod: boolean) => {
             videoPlaybackAccessToken?: AccessToken;
             streamPlaybackAccessToken?: AccessToken;
           };
-        }>
+        }>,
     )
     .then((data) =>
-      isVod ? data?.data?.videoPlaybackAccessToken : data?.data?.streamPlaybackAccessToken
+      isVod ? data?.data?.videoPlaybackAccessToken : data?.data?.streamPlaybackAccessToken,
     )
     .then((accessToken) => {
       if (!accessToken) throw 'Could not get Twitch access token';
@@ -54,7 +54,7 @@ const getPlaylist = (videoId: string, accessToken: AccessToken, isVod: boolean) 
       isVod ? 'vod' : 'api/channel/hls'
     }/${videoId}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${
       accessToken.signature
-    }&allow_source=true&allow_audio_only=true`
+    }&allow_source=true&allow_audio_only=true`,
   )
     .then((response) => response.text())
     .catch(() => {
