@@ -8,13 +8,14 @@ const topStreamers = [
   'Mizkif',
   'tommyinnit',
   'shroud',
-  'Sykkuno',
   'DisguisedToast',
   'pokimane',
   'Amouranth',
   'dakotaz',
   'GMHikaru',
-  'Myth',
+  'theneedledrop',
+  'Northernlion',
+  'theo',
 ];
 
 const SearchInput = forwardRef<HTMLInputElement>((props, ref) => {
