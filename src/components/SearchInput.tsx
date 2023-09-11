@@ -3,19 +3,22 @@
 import { forwardRef, useEffect, useState } from 'react';
 
 const topStreamers = [
-  'HasanAbi',
-  'GeorgeNotFound',
-  'Mizkif',
-  'tommyinnit',
-  'shroud',
-  'DisguisedToast',
-  'pokimane',
   'Amouranth',
   'dakotaz',
+  'DisguisedToast',
   'GMHikaru',
-  'theneedledrop',
+  'HasanAbi',
+  'ironmouse',
+  'itsHafu',
+  'Kyedae',
+  'Mizkif',
   'Northernlion',
+  'pokimane',
+  'QTCinderella',
+  'shroud',
+  'theneedledrop',
   'theo',
+  'TinaKitten',
 ];
 
 const SearchInput = forwardRef<HTMLInputElement>((props, ref) => {
