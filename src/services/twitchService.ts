@@ -1,4 +1,4 @@
-import cacheService from './cacheService';
+import { withCache } from './cacheService';
 import type { User, Video } from '~/types';
 
 type DataWrapper<T> = { data?: T };
@@ -41,32 +41,26 @@ const getUserData = async (rawUsername: string) => {
   return user;
 };
 
-const getRawUserData = async (username: string) => {
-  const cacheKey = `twitch-api-raw-user-data-${username}`;
-  const cacheResult = await cacheService.get<RawUser>(cacheKey);
-  if (cacheResult) return cacheResult;
+const getRawUserData = withCache(
+  'twitch-api-raw-user-data-',
+  3 * 24 * 60 * 60,
+  async (username: string) => {
+    const data = await getTwitch<DataWrapper<RawUser[]>>(
+      `https://api.twitch.tv/helix/users?login=${username}`,
+    );
 
-  const data = await getTwitch<DataWrapper<RawUser[]>>(
-    `https://api.twitch.tv/helix/users?login=${username}`,
-  );
+    if (!data || !data.data || data.data.length === 0)
+      throw `Sorry, we could not find the user "${username}" 🙁`;
 
-  if (!data || !data.data || data.data.length === 0)
-    throw `Sorry, we could not find the user "${username}" 🙁`;
+    const rawUserData = data.data[0];
 
-  const rawUserData = data.data[0];
+    if (!rawUserData) throw `Sorry, we could not find the user "${username}" 🙁`;
 
-  if (!rawUserData) throw `Sorry, we could not find the user "${username}" 🙁`;
+    return rawUserData;
+  },
+);
 
-  await cacheService.set(cacheKey, rawUserData, 3 * 86400);
-
-  return rawUserData;
-};
-
-const getVideos = async (userId: string) => {
-  const cacheKey = `twitch-api-user-videos-${userId}`;
-  const cacheResult = await cacheService.get<Video[]>(cacheKey);
-  if (cacheResult) return cacheResult;
-
+const getVideos = withCache('twitch-api-user-videos-', 10 * 60, async (userId: string) => {
   const data = await getTwitch<DataWrapper<RawVideo[]>>(
     `https://api.twitch.tv/helix/videos?user_id=${userId}`,
   );
@@ -103,28 +97,22 @@ const getVideos = async (userId: string) => {
       return video;
     });
 
-  await cacheService.set(cacheKey, videos, 600);
-
   return videos;
-};
+});
+
+const getTwitchToken = withCache('twitch-api-token', 2 * 60 * 60, async () => {
+  const data = await fetch(
+    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
+    { method: 'POST' },
+  ).then((response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>);
+
+  if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
+
+  return data.access_token;
+});
 
 const getTwitch = async <T>(url: string) => {
-  const cacheKey = `twitch-api-token`;
-  let token = await cacheService.get<string>(cacheKey);
-
-  if (!token) {
-    const data = await fetch(
-      `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
-      { method: 'POST' },
-    ).then(
-      (response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>,
-    );
-
-    if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
-
-    token = data.access_token;
-    await cacheService.set(cacheKey, token, data.expires_in - 300);
-  }
+  const token = await getTwitchToken();
 
   const headers = {
     Authorization: `Bearer ${token}`,

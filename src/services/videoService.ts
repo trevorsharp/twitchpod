@@ -1,20 +1,14 @@
 import { Quality } from '~/types';
-import cacheService from './cacheService';
+import { withCache } from './cacheService';
 import { getVodPlaylist } from './m3u8Service';
 
-const getStream = async (videoId: string, quality: Quality) => {
-  const cacheKey = `playlist-data-${videoId}-${quality}`;
-  const cacheResult = await cacheService.get<string>(cacheKey);
-  if (cacheResult) return cacheResult;
-
+const getStream = withCache('playlist-data-', 5 * 60, async (videoId: string, quality: Quality) => {
   const playlistData = await getPlaylistData(videoId, quality);
 
   if (playlistData === '') throw `Video not found with id ${videoId}`;
 
-  await cacheService.set(cacheKey, playlistData, 300);
-
   return playlistData;
-};
+});
 
 const getPlaylistData = async (videoId: string, quality: Quality) => {
   const [rawPlaylist, playlistData] = await getVodPlaylist(videoId);

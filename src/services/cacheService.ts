@@ -27,14 +27,24 @@ const set = async <T>(key: string, value: T, ttl: number) => {
   return cache.set<T>(key, value, ttl);
 };
 
-const del = async (key: string | string[]) => {
-  if (redis) {
-    return await redis.del(...(typeof key === 'string' ? [key] : key));
-  }
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-  return cache.del(key);
-};
+const withCache =
+  <TFunc extends (...args: any[]) => Promise<any>>(cachePrefix: string, ttl: number, func: TFunc) =>
+  async (...args: Parameters<TFunc>): Promise<Awaited<ReturnType<TFunc>>> => {
+    const cacheKey = `${cachePrefix}${args.join('-')}`;
+    const cacheResult = await get<Awaited<ReturnType<TFunc>>>(cacheKey);
 
-const cacheService = { get, set, del };
+    if (cacheResult) return cacheResult;
 
-export default cacheService;
+    const result = await func(...args);
+
+    if (result) set<Awaited<ReturnType<TFunc>>>(cacheKey, result, ttl);
+
+    return result;
+  };
+
+export { get, set, withCache };
