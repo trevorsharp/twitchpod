@@ -1,8 +1,8 @@
-import MainPage from '~/components/MainPage';
-
-// Using this for static generation
-export const runtime = 'nodejs';
+import MainPage from "~/components/MainPage";
 
 const Page = () => <MainPage />;
+
+export const runtime = "nodejs";
+export const dynamic = "force-static";
 
 export default Page;

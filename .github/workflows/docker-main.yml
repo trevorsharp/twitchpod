@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    tags: 'v*.*.*'
+    tags: "v*.*.*"
 
 jobs:
   build:
-    name: 'Build and Push Docker Image'
+    name: "Build and Push Docker Image"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

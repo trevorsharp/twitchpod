@@ -1,6 +1,6 @@
-import { headers } from 'next/headers';
-import { getUserData } from '~/services/twitchService';
-import AddFeed from './AddFeed';
+import { headers } from "next/headers";
+import { getUserData } from "~/services/twitchService";
+import AddFeed from "./AddFeed";
 
 type SearchResultProps = {
   username: string;
@@ -16,7 +16,7 @@ const SearchResult = async ({ username }: SearchResultProps) => {
           <img className="h-16 w-16 rounded-full" src={user.profileImageUrl} alt="Profile" />
           <p className="text-4xl font-bold">{user.displayName}</p>
         </a>
-        <AddFeed username={user.username} hostname={headers().get('host') ?? ''} />
+        <AddFeed username={user.username} hostname={headers().get("host") ?? ""} />
       </div>
     );
   } catch (errorMessage) {

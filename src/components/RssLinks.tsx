@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Quality } from '~/types';
+import { useState } from "react";
+import { Quality } from "~/types";
 
 type RssLinksProps = {
   username: string;
@@ -10,15 +10,15 @@ type RssLinksProps = {
 };
 
 const RssLinks = ({ username, quality, hostname }: RssLinksProps) => {
-  const [copiedText, setCopiedText] = useState<string>('');
+  const [copiedText, setCopiedText] = useState<string>("");
 
   const getRssLink = () =>
-    `${hostname}/${username}/feed${quality != Quality.Maximum ? `?quality=${quality}` : ''}`;
+    `${hostname}/${username}/feed${quality != Quality.Maximum ? `?quality=${quality}` : ""}`;
 
   const copyRssLink = () => {
     void navigator.clipboard.writeText(`http://${getRssLink()}`).then(() => {
-      setCopiedText('Copied link to RSS feed 🎉');
-      setTimeout(() => setCopiedText(''), 2000);
+      setCopiedText("Copied link to RSS feed 🎉");
+      setTimeout(() => setCopiedText(""), 2000);
     });
   };
 

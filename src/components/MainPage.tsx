@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import Search from './Search';
-import SearchResult from './SearchResult';
+import Link from "next/link";
+import Search from "./Search";
+import SearchResult from "./SearchResult";
 
 type MainPageProps = {
   username?: string;

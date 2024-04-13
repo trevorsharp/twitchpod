@@ -1,5 +1,6 @@
-import { withCache } from './cacheService';
-import type { User, Video } from '~/types';
+import { env } from "~/env";
+import { withCache } from "./cacheService";
+import type { User, Video } from "~/types";
 
 type DataWrapper<T> = { data?: T };
 
@@ -42,14 +43,13 @@ const getUserData = async (rawUsername: string) => {
 };
 
 const getRawUserData = withCache(
-  'twitch-api-raw-user-data-',
-  3 * 24 * 60 * 60,
+  { cacheKey: "twitch-api-raw-user-data", ttl: 3 * 24 * 60 * 60 },
   async (username: string) => {
     const data = await getTwitch<DataWrapper<RawUser[]>>(
       `https://api.twitch.tv/helix/users?login=${username}`,
     );
 
-    if (!data || !data.data || data.data.length === 0)
+    if (!data?.data || data.data.length === 0)
       throw `Sorry, we could not find the user "${username}" 🙁`;
 
     const rawUserData = data.data[0];
@@ -60,53 +60,56 @@ const getRawUserData = withCache(
   },
 );
 
-const getVideos = withCache('twitch-api-user-videos-', 10 * 60, async (userId: string) => {
-  const data = await getTwitch<DataWrapper<RawVideo[]>>(
-    `https://api.twitch.tv/helix/videos?user_id=${userId}`,
-  );
+const getVideos = withCache(
+  { cacheKey: "twitch-api-user-videos", ttl: 10 * 60 },
+  async (userId: string) => {
+    const data = await getTwitch<DataWrapper<RawVideo[]>>(
+      `https://api.twitch.tv/helix/videos?user_id=${userId}`,
+    );
 
-  if (!data || !data.data || data.data.length === 0) return [];
+    if (!data?.data || data.data.length === 0) return [];
 
-  const currentStreamData = await getTwitch<DataWrapper<RawCurrentStream[]>>(
-    `https://api.twitch.tv/helix/streams?user_id=${userId}`,
-  );
+    const currentStreamData = await getTwitch<DataWrapper<RawCurrentStream[]>>(
+      `https://api.twitch.tv/helix/streams?user_id=${userId}`,
+    );
 
-  const currentStream =
-    currentStreamData && currentStreamData.data && currentStreamData.data.length > 0
-      ? currentStreamData.data[0]
-      : undefined;
+    const currentStream =
+      currentStreamData?.data && currentStreamData.data.length > 0
+        ? currentStreamData.data[0]
+        : undefined;
 
-  const videos = data.data
-    .filter((rawVideo) => rawVideo.type === 'upload' || rawVideo.type === 'archive')
-    .map((rawVideo) => {
-      const video: Video = {
-        id: rawVideo.id,
-        title: rawVideo.title,
-        date: rawVideo.published_at,
-        url: `https://twitch.tv/videos/${rawVideo.id}`,
-        duration:
-          currentStream &&
-          Math.abs(
-            new Date(currentStream.started_at).getTime() -
-              new Date(rawVideo.published_at).getTime(),
-          ) < 900000
-            ? undefined
-            : getDuration(rawVideo.duration),
-      };
+    const videos = data.data
+      .filter((rawVideo) => rawVideo.type === "upload" || rawVideo.type === "archive")
+      .map((rawVideo) => {
+        const video: Video = {
+          id: rawVideo.id,
+          title: rawVideo.title,
+          date: rawVideo.published_at,
+          url: `https://twitch.tv/videos/${rawVideo.id}`,
+          duration:
+            currentStream &&
+            Math.abs(
+              new Date(currentStream.started_at).getTime() -
+                new Date(rawVideo.published_at).getTime(),
+            ) < 900000
+              ? undefined
+              : getDuration(rawVideo.duration),
+        };
 
-      return video;
-    });
+        return video;
+      });
 
-  return videos;
-});
+    return videos;
+  },
+);
 
-const getTwitchToken = withCache('twitch-api-token', 2 * 60 * 60, async () => {
+const getTwitchToken = withCache({ cacheKey: "twitch-api-token", ttl: 2 * 60 * 60 }, async () => {
   const data = await fetch(
-    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_API_CLIENT_ID}&client_secret=${process.env.TWITCH_API_SECRET}&grant_type=client_credentials`,
-    { method: 'POST' },
+    `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_API_CLIENT_ID}&client_secret=${env.TWITCH_API_SECRET}&grant_type=client_credentials`,
+    { method: "POST", cache: "no-store" },
   ).then((response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>);
 
-  if (!data || !data.access_token || !data.expires_in) throw 'Could not get Twith API token';
+  if (!data?.access_token || !data?.expires_in) throw "Could not get Twith API token";
 
   return data.access_token;
 });
@@ -116,9 +119,12 @@ const getTwitch = async <T>(url: string) => {
 
   const headers = {
     Authorization: `Bearer ${token}`,
-    'Client-Id': process.env.TWITCH_API_CLIENT_ID ?? '',
+    "Client-Id": env.TWITCH_API_CLIENT_ID,
   };
-  const data = await fetch(url, { headers }).then((response) => response.json() as Promise<T>);
+
+  const data = await fetch(url, { headers, cache: "no-store" }).then(
+    (response) => response.json() as Promise<T>,
+  );
 
   return data;
 };
@@ -126,12 +132,12 @@ const getTwitch = async <T>(url: string) => {
 const getDuration = (duration: string | undefined) => {
   if (!duration) return 0;
 
-  const getTimePart = (letter: 'h' | 'm' | 's') =>
-    parseInt(duration.match(new RegExp('[0-9]+(?=' + letter + ')'))?.find(() => true) ?? '0');
+  const getTimePart = (letter: "h" | "m" | "s") =>
+    parseInt(duration.match(new RegExp("[0-9]+(?=" + letter + ")"))?.find(() => true) ?? "0");
 
-  const hours = getTimePart('h');
-  const minutes = getTimePart('m');
-  const seconds = getTimePart('s');
+  const hours = getTimePart("h");
+  const minutes = getTimePart("m");
+  const seconds = getTimePart("s");
 
   return hours * 3600 + minutes * 60 + seconds;
 };

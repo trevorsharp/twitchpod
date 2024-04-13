@@ -1,11 +1,12 @@
-import { Redis } from '@upstash/redis';
-import NodeCache from 'node-cache';
+import { Redis } from "@upstash/redis";
+import NodeCache from "node-cache";
+import { env } from "~/env";
 
 const redis =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+  env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN
     ? new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+        url: env.UPSTASH_REDIS_REST_URL,
+        token: env.UPSTASH_REDIS_REST_TOKEN,
       })
     : undefined;
 
@@ -33,16 +34,19 @@ const set = async <T>(key: string, value: T, ttl: number) => {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 const withCache =
-  <TFunc extends (...args: any[]) => Promise<any>>(cachePrefix: string, ttl: number, func: TFunc) =>
+  <TFunc extends (...args: any[]) => Promise<any>>(
+    { cacheKey, ttl }: { cacheKey: string; ttl: number },
+    func: TFunc,
+  ) =>
   async (...args: Parameters<TFunc>): Promise<Awaited<ReturnType<TFunc>>> => {
-    const cacheKey = `${cachePrefix}${args.join('-')}`;
-    const cacheResult = await get<Awaited<ReturnType<TFunc>>>(cacheKey);
+    const fullCacheKey = `${cacheKey}${args.length > 0 ? "-" : ""}${args.join("-")}`;
+    const cacheResult = await get<Awaited<ReturnType<TFunc>>>(fullCacheKey);
 
     if (cacheResult) return cacheResult;
 
     const result = await func(...args);
 
-    if (result) await set<Awaited<ReturnType<TFunc>>>(cacheKey, result, ttl);
+    if (result) await set<Awaited<ReturnType<TFunc>>>(fullCacheKey, result, ttl);
 
     return result;
   };

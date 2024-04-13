@@ -1,6 +1,6 @@
-import { Podcast } from 'podcast';
-import { Quality } from '~/types';
-import { getUserData, getVideos } from './twitchService';
+import { Podcast } from "podcast";
+import { Quality } from "~/types";
+import { getUserData, getVideos } from "./twitchService";
 
 const getRssFeed = async (username: string, hostname: string, quality: Quality) => {
   const user = await getUserData(username);
@@ -11,7 +11,7 @@ const getRssFeed = async (username: string, hostname: string, quality: Quality) 
     description: user.description,
     author: user.displayName,
     feedUrl: `http://${hostname}/${username}/feed${
-      quality != Quality.Maximum ? `?quality=${quality}` : ''
+      quality != Quality.Maximum ? `?quality=${quality}` : ""
     }`,
     siteUrl: user.url,
     imageUrl: user.profileImageUrl,
@@ -25,9 +25,9 @@ const getRssFeed = async (username: string, hostname: string, quality: Quality) 
       date: new Date(video.date),
       enclosure: {
         url: `http://${hostname}/videos/${video.id}${
-          quality != Quality.Maximum ? `?quality=${quality}` : ''
+          quality != Quality.Maximum ? `?quality=${quality}` : ""
         }`,
-        type: quality === Quality.Audio ? 'audio/aac' : 'video/mp4',
+        type: quality === Quality.Audio ? "audio/aac" : "video/mp4",
       },
       url: video.url,
       itunesDuration: video.duration,

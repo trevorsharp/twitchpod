@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Quality } from '~/types';
-import QualitySelection from './QualitySelection';
-import RssLinks from './RssLinks';
+import { useState } from "react";
+import { Quality } from "~/types";
+import QualitySelection from "./QualitySelection";
+import RssLinks from "./RssLinks";
 
 type AddFeedProps = {
   username: string;

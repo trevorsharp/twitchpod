@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from "react";
 
 const topStreamers = [
-  'Amouranth',
-  'dakotaz',
-  'DisguisedToast',
-  'GMHikaru',
-  'HasanAbi',
-  'ironmouse',
-  'itsHafu',
-  'Kyedae',
-  'Mizkif',
-  'Northernlion',
-  'pokimane',
-  'QTCinderella',
-  'shroud',
-  'theneedledrop',
-  'theo',
-  'TinaKitten',
+  "Amouranth",
+  "dakotaz",
+  "DisguisedToast",
+  "GMHikaru",
+  "HasanAbi",
+  "ironmouse",
+  "itsHafu",
+  "Kyedae",
+  "Mizkif",
+  "Northernlion",
+  "pokimane",
+  "QTCinderella",
+  "shroud",
+  "theneedledrop",
+  "theo",
+  "TinaKitten",
 ];
 
 const SearchInput = forwardRef<HTMLInputElement>((props, ref) => {
-  const [inputPlaceholder, setInputPlaceholder] = useState<string>('');
+  const [inputPlaceholder, setInputPlaceholder] = useState<string>("");
 
   const animationTimeouts: NodeJS.Timeout[] = [];
 
@@ -30,7 +30,7 @@ const SearchInput = forwardRef<HTMLInputElement>((props, ref) => {
     const streamerList = topStreamers.sort(() => 0.5 - Math.random());
     let timeout = 0;
     streamerList.forEach((streamer) => {
-      streamer.split('').forEach((_, i) => {
+      streamer.split("").forEach((_, i) => {
         animationTimeouts.push(
           setTimeout(() => setInputPlaceholder(streamer.substring(0, i + 1)), timeout),
         );
@@ -61,6 +61,6 @@ const SearchInput = forwardRef<HTMLInputElement>((props, ref) => {
   );
 });
 
-SearchInput.displayName = 'SearchInput';
+SearchInput.displayName = "SearchInput";
 
 export default SearchInput;

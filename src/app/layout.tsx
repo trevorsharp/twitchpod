@@ -1,14 +1,20 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export const metadata: Metadata = {
-  title: 'twitchPOD',
-  description: 'Generate podcast feeds for your favorite Twitch streamers',
-  icons: { icon: { rel: 'icon', url: '/favicon.ico' }, apple: { rel: 'icon', url: '/apple-touch-icon.png'} },
-  themeColor: '#9146FF',
+  title: "twitchPOD",
+  description: "Generate podcast feeds for your favorite Twitch streamers",
+  icons: {
+    icon: { rel: "icon", url: "/favicon.ico" },
+    apple: { rel: "icon", url: "/apple-touch-icon.png" },
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#9146FF",
 };
 
 type LayoutProps = {

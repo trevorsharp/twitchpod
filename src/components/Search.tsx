@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import SearchInput from './SearchInput';
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import SearchInput from "./SearchInput";
 
 const Search = ({ initialSearch }: { initialSearch?: string }) => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const Search = ({ initialSearch }: { initialSearch?: string }) => {
     defaultValues: { searchText: initialSearch },
   });
 
-  useEffect(() => setFocus('searchText'), []);
+  useEffect(() => setFocus("searchText"), []);
 
   const onSubmit = handleSubmit((values) => {
     if (values.searchText && values.searchText !== initialSearch) {
@@ -29,11 +29,11 @@ const Search = ({ initialSearch }: { initialSearch?: string }) => {
   return (
     <>
       <form className="flex items-center gap-4" onSubmit={onSubmit}>
-        <SearchInput {...register('searchText')} />
+        <SearchInput {...register("searchText")} />
         <button type="submit">
           <img
             className="h-8 w-8 text-twitch"
-            src={isLoading ? '/loading.svg' : '/next.svg'}
+            src={isLoading ? "/loading.svg" : "/next.svg"}
             alt="Submit"
           />
         </button>
