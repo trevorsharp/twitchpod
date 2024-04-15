@@ -2,8 +2,6 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "twitchPOD",
   description: "Generate podcast feeds for your favorite Twitch streamers",

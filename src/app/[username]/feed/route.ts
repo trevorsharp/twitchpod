@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getRssFeed } from "~/services/feedService";
 import { Quality } from "~/types";
 
+export const revalidate = 10 * 600;
+
 const GET = async (request: Request, { params }: { params: { username: string } }) => {
   try {
     const { username } = params;
@@ -13,7 +15,7 @@ const GET = async (request: Request, { params }: { params: { username: string } 
 
     const rssFeed = await getRssFeed(username, hostname, quality);
 
-    return new NextResponse(rssFeed, { headers: { "Cache-Control": "s-maxage=600" } });
+    return new NextResponse(rssFeed);
   } catch (errorMessage) {
     return new NextResponse((errorMessage as string | undefined) ?? "Unexpected Error", {
       status: 500,

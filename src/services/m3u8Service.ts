@@ -26,7 +26,7 @@ const getAccessToken = (videoId: string, isVod: boolean) => {
     method: "POST",
     headers: { "Client-id": clientId },
     body: data,
-    cache: "no-store",
+    next: { revalidate: 5 * 60 },
   })
     .then(
       (response) =>
@@ -56,7 +56,7 @@ const getPlaylist = (videoId: string, accessToken: AccessToken, isVod: boolean) 
     }/${videoId}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${
       accessToken.signature
     }&allow_source=true&allow_audio_only=true`,
-    { cache: "no-store" },
+    { next: { revalidate: 5 * 60 } },
   )
     .then((response) => response.text())
     .catch(() => {
