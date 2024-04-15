@@ -1,17 +1,13 @@
 import { Quality } from "~/types";
-import { withCache } from "./cacheService";
 import { getVodPlaylist } from "./m3u8Service";
 
-const getStream = withCache(
-  { cacheKey: "playlist-data", ttl: 5 * 60 },
-  async (videoId: string, quality: Quality) => {
-    const playlistData = await getPlaylistData(videoId, quality);
+const getStream = async (videoId: string, quality: Quality) => {
+  const playlistData = await getPlaylistData(videoId, quality);
 
-    if (playlistData === "") throw `Video not found with id ${videoId}`;
+  if (playlistData === "") throw `Video not found with id ${videoId}`;
 
-    return playlistData;
-  },
-);
+  return playlistData;
+};
 
 const getPlaylistData = async (videoId: string, quality: Quality) => {
   const [rawPlaylist, playlistData] = await getVodPlaylist(videoId);
@@ -35,7 +31,7 @@ const getPlaylistData = async (videoId: string, quality: Quality) => {
       break;
   }
 
-  const response = await fetch(playlistUrl, { cache: "no-store" });
+  const response = await fetch(playlistUrl, { next: { revalidate: 5 * 60 } });
   if (response.status !== 200) throw "Failed to fetch content stream";
 
   const baseStreamUrl = playlistUrl.replace(/index[^\.]*\.m3u8/i, "");

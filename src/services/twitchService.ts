@@ -1,5 +1,4 @@
 import { env } from "~/env";
-import { withCache } from "./cacheService";
 import type { User, Video } from "~/types";
 
 type DataWrapper<T> = { data?: T };
@@ -42,79 +41,76 @@ const getUserData = async (rawUsername: string) => {
   return user;
 };
 
-const getRawUserData = withCache(
-  { cacheKey: "twitch-api-raw-user-data", ttl: 3 * 24 * 60 * 60 },
-  async (username: string) => {
-    const data = await getTwitch<DataWrapper<RawUser[]>>(
-      `https://api.twitch.tv/helix/users?login=${username}`,
-    );
+const getRawUserData = async (username: string) => {
+  const data = await getTwitch<DataWrapper<RawUser[]>>(
+    `https://api.twitch.tv/helix/users?login=${username}`,
+    { ttl: 3 * 24 * 60 * 60 },
+  );
 
-    if (!data?.data || data.data.length === 0)
-      throw `Sorry, we could not find the user "${username}" 🙁`;
+  if (!data?.data || data.data.length === 0)
+    throw `Sorry, we could not find the user "${username}" 🙁`;
 
-    const rawUserData = data.data[0];
+  const rawUserData = data.data[0];
 
-    if (!rawUserData) throw `Sorry, we could not find the user "${username}" 🙁`;
+  if (!rawUserData) throw `Sorry, we could not find the user "${username}" 🙁`;
 
-    return rawUserData;
-  },
-);
+  return rawUserData;
+};
 
-const getVideos = withCache(
-  { cacheKey: "twitch-api-user-videos", ttl: 10 * 60 },
-  async (userId: string) => {
-    const data = await getTwitch<DataWrapper<RawVideo[]>>(
-      `https://api.twitch.tv/helix/videos?user_id=${userId}`,
-    );
+const getVideos = async (userId: string) => {
+  const data = await getTwitch<DataWrapper<RawVideo[]>>(
+    `https://api.twitch.tv/helix/videos?user_id=${userId}`,
+    { ttl: 10 * 60 },
+  );
 
-    if (!data?.data || data.data.length === 0) return [];
+  if (!data?.data || data.data.length === 0) return [];
 
-    const currentStreamData = await getTwitch<DataWrapper<RawCurrentStream[]>>(
-      `https://api.twitch.tv/helix/streams?user_id=${userId}`,
-    );
+  const currentStreamData = await getTwitch<DataWrapper<RawCurrentStream[]>>(
+    `https://api.twitch.tv/helix/streams?user_id=${userId}`,
+    { ttl: 10 * 60 },
+  );
 
-    const currentStream =
-      currentStreamData?.data && currentStreamData.data.length > 0
-        ? currentStreamData.data[0]
-        : undefined;
+  const currentStream =
+    currentStreamData?.data && currentStreamData.data.length > 0
+      ? currentStreamData.data[0]
+      : undefined;
 
-    const videos = data.data
-      .filter((rawVideo) => rawVideo.type === "upload" || rawVideo.type === "archive")
-      .map((rawVideo) => {
-        const video: Video = {
-          id: rawVideo.id,
-          title: rawVideo.title,
-          date: rawVideo.published_at,
-          url: `https://twitch.tv/videos/${rawVideo.id}`,
-          duration:
-            currentStream &&
-            Math.abs(
-              new Date(currentStream.started_at).getTime() -
-                new Date(rawVideo.published_at).getTime(),
-            ) < 900000
-              ? undefined
-              : getDuration(rawVideo.duration),
-        };
+  const videos = data.data
+    .filter((rawVideo) => rawVideo.type === "upload" || rawVideo.type === "archive")
+    .map((rawVideo) => {
+      const video: Video = {
+        id: rawVideo.id,
+        title: rawVideo.title,
+        date: rawVideo.published_at,
+        url: `https://twitch.tv/videos/${rawVideo.id}`,
+        duration:
+          currentStream &&
+          Math.abs(
+            new Date(currentStream.started_at).getTime() -
+              new Date(rawVideo.published_at).getTime(),
+          ) < 900000
+            ? undefined
+            : getDuration(rawVideo.duration),
+      };
 
-        return video;
-      });
+      return video;
+    });
 
-    return videos;
-  },
-);
+  return videos;
+};
 
-const getTwitchToken = withCache({ cacheKey: "twitch-api-token", ttl: 2 * 60 * 60 }, async () => {
+const getTwitchToken = async () => {
   const data = await fetch(
     `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_API_CLIENT_ID}&client_secret=${env.TWITCH_API_SECRET}&grant_type=client_credentials`,
-    { method: "POST", cache: "no-store" },
+    { method: "POST", next: { revalidate: 2 * 60 * 60 } },
   ).then((response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>);
 
   if (!data?.access_token || !data?.expires_in) throw "Could not get Twith API token";
 
   return data.access_token;
-});
+};
 
-const getTwitch = async <T>(url: string) => {
+const getTwitch = async <T>(url: string, options?: { ttl?: number }) => {
   const token = await getTwitchToken();
 
   const headers = {
@@ -122,7 +118,7 @@ const getTwitch = async <T>(url: string) => {
     "Client-Id": env.TWITCH_API_CLIENT_ID,
   };
 
-  const data = await fetch(url, { headers, cache: "no-store" }).then(
+  const data = await fetch(url, { headers, next: { revalidate: options?.ttl ?? 0 } }).then(
     (response) => response.json() as Promise<T>,
   );
 
