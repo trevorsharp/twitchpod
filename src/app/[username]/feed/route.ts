@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getRssFeed } from "~/services/feedService";
 import { Quality } from "~/types";
 
-export const revalidate = 10 * 600;
+export const revalidate = 10 * 60;
 
 const GET = async (request: Request, { params }: { params: { username: string } }) => {
   try {
