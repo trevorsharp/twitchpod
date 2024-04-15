@@ -1,3 +1,4 @@
+import "server-only";
 import { env } from "~/env";
 import type { User, Video } from "~/types";
 

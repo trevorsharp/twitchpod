@@ -1,5 +1,7 @@
 // Sourced from https://github.com/dudik/twitch-m3u8
 
+import "server-only";
+
 type AccessToken = { value: string; signature: string };
 
 const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko";
