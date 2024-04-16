@@ -13,7 +13,9 @@ const GET = async (request: Request, { params }: { params: { videoId: string } }
 
     const m3u8 = await getStream(videoId, quality);
 
-    return new NextResponse(m3u8, { headers: { "Content-Type": "application/x-mpegURL" } });
+    return new NextResponse(m3u8, {
+      headers: { "Cache-Control": "s-maxage=600", "Content-Type": "application/x-mpegURL" },
+    });
   } catch (errorMessage) {
     return new NextResponse((errorMessage as string | undefined) ?? "Unexpected Error", {
       status: 500,
