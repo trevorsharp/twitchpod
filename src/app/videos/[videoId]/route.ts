@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getStream } from "~/services/videoService";
 import { Quality } from "~/types";
 
-export const revalidate = 5 * 60;
+export const runtime = "edge";
 
 const GET = async (request: Request, { params }: { params: { videoId: string } }) => {
   try {
