@@ -1,7 +1,5 @@
 import MainPage from "~/components/MainPage";
 
-export const runtime = "edge";
-
 type PageProps = {
   params: { username: string };
 };

@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { getStream } from "~/services/videoService";
 import { Quality } from "~/types";
 
-export const runtime = "edge";
-
 const GET = async (request: Request, { params }: { params: { videoId: string } }) => {
   try {
     const { videoId } = params;
