@@ -26,7 +26,7 @@ const getRssFeed = async (username: string, hostname: string, quality: Quality) 
       date: new Date(video.date),
       enclosure: {
         url: `http://${hostname}/videos/${video.id}${
-          quality != Quality.Maximum ? `?quality=${quality}` : ""
+          quality != Quality.Maximum ? `?quality=${quality}&m3u8` : "?m3u8"
         }`,
         type: quality === Quality.Audio ? "audio/aac" : "video/mp4",
       },
