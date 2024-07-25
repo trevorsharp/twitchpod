@@ -13,7 +13,7 @@ const GET = async (request: Request, { params }: { params: { username: string } 
 
     const rssFeed = await getRssFeed(username, hostname, quality);
 
-    return new NextResponse(rssFeed, { headers: { "Cache-Control": "s-maxage=300" } });
+    return new NextResponse(rssFeed, { headers: { "Cache-Control": "s-maxage=900" } });
   } catch (errorMessage) {
     return new NextResponse((errorMessage as string | undefined) ?? "Unexpected Error", {
       status: 500,

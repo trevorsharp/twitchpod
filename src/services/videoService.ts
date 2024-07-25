@@ -32,7 +32,7 @@ const getPlaylistData = async (videoId: string, quality: Quality) => {
       break;
   }
 
-  const response = await fetch(playlistUrl, { next: { revalidate: 5 * 60 } });
+  const response = await fetch(playlistUrl, { cache: "no-store" });
   if (response.status !== 200) throw "Failed to fetch content stream";
 
   const baseStreamUrl = playlistUrl.replace(/index[^\.]*\.m3u8/i, "");

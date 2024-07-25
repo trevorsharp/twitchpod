@@ -61,14 +61,12 @@ const getRawUserData = async (username: string) => {
 const getVideos = async (userId: string) => {
   const data = await getTwitch<DataWrapper<RawVideo[]>>(
     `https://api.twitch.tv/helix/videos?user_id=${userId}`,
-    { ttl: 10 * 60 },
   );
 
   if (!data?.data || data.data.length === 0) return [];
 
   const currentStreamData = await getTwitch<DataWrapper<RawCurrentStream[]>>(
     `https://api.twitch.tv/helix/streams?user_id=${userId}`,
-    { ttl: 10 * 60 },
   );
 
   const currentStream =
@@ -119,7 +117,11 @@ const getTwitch = async <T>(url: string, options?: { ttl?: number }) => {
     "Client-Id": env.TWITCH_API_CLIENT_ID,
   };
 
-  const data = await fetch(url, { headers, next: { revalidate: options?.ttl ?? 0 } }).then(
+  const cacheOptions = options?.ttl
+    ? ({ next: { revalidate: options?.ttl ?? 0 } } as const)
+    : ({ cache: "no-store" } as const);
+
+  const data = await fetch(url, { headers, ...cacheOptions }).then(
     (response) => response.json() as Promise<T>,
   );
 

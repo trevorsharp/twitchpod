@@ -58,7 +58,7 @@ const getPlaylist = (videoId: string, accessToken: AccessToken, isVod: boolean) 
     }/${videoId}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${
       accessToken.signature
     }&allow_source=true&allow_audio_only=true`,
-    { next: { revalidate: 5 * 60 } },
+    { cache: "no-store" },
   )
     .then((response) => response.text())
     .catch(() => {
