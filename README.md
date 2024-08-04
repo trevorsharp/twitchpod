@@ -25,7 +25,6 @@ To run this application using Docker:
 ### docker-compose.yml
 
 ```
-version: '3'
 services:
   twitchpod:
     image: trevorsharp/twitchpod:latest
