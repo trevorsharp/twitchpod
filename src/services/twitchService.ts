@@ -48,12 +48,11 @@ const getRawUserData = async (username: string) => {
     { ttl: 3 * 24 * 60 * 60 },
   );
 
-  if (!data?.data || data.data.length === 0)
-    throw `Sorry, we could not find the user "${username}" 🙁`;
+  if (!data?.data || data.data.length === 0) throw `Sorry, the user "${username}" was not found 🙁`;
 
   const rawUserData = data.data[0];
 
-  if (!rawUserData) throw `Sorry, we could not find the user "${username}" 🙁`;
+  if (!rawUserData) throw `Sorry, the user "${username}" was not found 🙁`;
 
   return rawUserData;
 };

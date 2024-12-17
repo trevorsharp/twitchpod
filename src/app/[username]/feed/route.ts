@@ -14,8 +14,13 @@ const GET = async (request: Request, { params }: { params: { username: string } 
     const rssFeed = await getRssFeed(username, hostname, quality);
 
     return new NextResponse(rssFeed, { headers: { "Cache-Control": "s-maxage=900" } });
-  } catch (errorMessage) {
-    return new NextResponse((errorMessage as string | undefined) ?? "Unexpected Error", {
+  } catch (error) {
+    if (typeof error === "string" && error.toLowerCase().includes("not found"))
+      return new NextResponse(error, { status: 404 });
+
+    console.error(error);
+
+    return new NextResponse(typeof error === "string" ? error : "Unexpected Error", {
       status: 500,
     });
   }
