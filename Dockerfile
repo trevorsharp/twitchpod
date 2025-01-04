@@ -1,10 +1,10 @@
 FROM node:lts AS base
 WORKDIR /app
 
+COPY ./package.json ./package.json
+
 # Install production dependencies
 FROM base AS install
-
-COPY ./package.json ./package.json
 
 RUN npm install --omit=dev
 
@@ -19,8 +19,9 @@ COPY . .
 RUN npm run build
 
 # Compose release container
-FROM install AS release
+FROM base AS release
 
+COPY --from=install /app/node_modules ./node_modules
 COPY --from=build /app/.next ./.next
 
 EXPOSE 3000
