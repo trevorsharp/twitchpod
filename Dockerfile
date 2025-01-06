@@ -22,6 +22,7 @@ RUN npm run build
 FROM base AS release
 
 COPY --from=install /app/node_modules ./node_modules
+COPY --from=build /app/public ./public
 COPY --from=build /app/.next ./.next
 
 EXPOSE 3000
