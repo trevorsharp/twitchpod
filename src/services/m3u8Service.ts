@@ -55,7 +55,7 @@ const getPlaylist = (videoId: string, accessToken: AccessToken, isVod: boolean) 
   return fetch(
     `https://usher.ttvnw.net/${
       isVod ? "vod" : "api/channel/hls"
-    }/${videoId}.m3u8?client_id=${clientId}&token=${accessToken.value}&sig=${
+    }/${videoId}.m3u8?client_id=${clientId}&token=${encodeURIComponent(accessToken.value)}&sig=${
       accessToken.signature
     }&allow_source=true&allow_audio_only=true`,
     { cache: "no-store" },
