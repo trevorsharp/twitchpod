@@ -103,7 +103,7 @@ const getTwitchToken = async () => {
     { method: "POST", next: { revalidate: 2 * 60 * 60 } },
   ).then((response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>);
 
-  if (!data?.access_token || !data?.expires_in) throw "Could not get Twith API token";
+  if (!data?.access_token || !data?.expires_in) throw "Could not get Twitch API token";
 
   return data.access_token;
 };

@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { getStream } from "~/services/videoService";
 import { Quality } from "~/types";
 
-const GET = async (request: Request, { params }: { params: { videoId: string } }) => {
+const GET = async (request: Request, { params }: { params: Promise<{ videoId: string }> }) => {
   try {
-    const { videoId } = params;
+    const { videoId } = await params;
 
     const { searchParams } = new URL(request.url);
     const quality = parseInt(searchParams.get("quality") ?? "") || Quality.Maximum;

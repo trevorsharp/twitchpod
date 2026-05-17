@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { getRssFeed } from "~/services/feedService";
 import { Quality } from "~/types";
 
-const GET = async (request: Request, { params }: { params: { username: string } }) => {
+const GET = async (request: Request, { params }: { params: Promise<{ username: string }> }) => {
   try {
-    const { username } = params;
+    const { username } = await params;
 
     const hostname = request.headers.get("host") ?? "";
 
