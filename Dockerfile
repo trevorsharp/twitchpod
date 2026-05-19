@@ -6,6 +6,7 @@ FROM base AS build
 COPY ui/package.json ui/bun.lock ./
 RUN bun install --frozen-lockfile
 COPY ./ui .
+COPY ./tsconfig.json ./tsconfig.json
 ENV SKIP_ENV_VALIDATION=true
 RUN bun run build
 
@@ -15,6 +16,7 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production
 COPY --from=build /static ./static
 COPY ./src ./src
+COPY ./tsconfig.json ./tsconfig.json
 
 EXPOSE 3000/tcp
 CMD bun run start
