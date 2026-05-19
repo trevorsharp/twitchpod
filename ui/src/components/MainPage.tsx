@@ -1,6 +1,6 @@
-import { indexRoute } from "../routes";
-import Search from "./Search";
-import SearchResult from "./SearchResult";
+import { indexRoute } from "@ui/routes";
+import Search from "@ui/components/Search";
+import SearchResult from "@ui/components/SearchResult";
 
 const MainPage = () => {
   const { _splat: username } = indexRoute.useParams();

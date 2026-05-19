@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build --outDir '../static' --emptyOutDir",
-    "lint": "tsc --noEmit"
+    "build": "vite build --outDir '../static' --emptyOutDir"
   },
   "dependencies": {
     "@hookform/resolvers": "3.10.0",

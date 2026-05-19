@@ -1,6 +1,6 @@
 import { Podcast } from "podcast";
-import { Quality } from "~/types";
-import { getUserData, getVideos } from "./twitchService";
+import { Quality } from "@/types";
+import { getUserData, getVideos } from "@/services/twitchService";
 
 const getRssFeed = async (username: string, hostname: string, quality: Quality) => {
   const user = await getUserData(username);

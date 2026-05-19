@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Quality } from "../types";
-import QualitySelection from "./QualitySelection";
-import RssLinks from "./RssLinks";
+import { Quality } from "@ui/types";
+import QualitySelection from "@ui/components/QualitySelection";
+import RssLinks from "@ui/components/RssLinks";
 
 type AddFeedProps = {
   username: string;

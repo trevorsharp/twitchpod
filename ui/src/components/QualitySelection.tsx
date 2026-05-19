@@ -1,4 +1,4 @@
-import { Quality } from "../types";
+import { Quality } from "@/types";
 
 type QualitySelectionProps = {
   selection: Quality;
@@ -65,7 +65,7 @@ const RadioButton = <TValue extends string | number>({
 }: RadioButtonProps<TValue>) => (
   <label className="flex cursor-pointer items-center">
     <input
-      className="checked:border-twitch checked:ring-twitch normal:checked:ring-[3px] peer h-4 w-4 cursor-pointer appearance-none rounded-full border-2 border-neutral-500 checked:ring-2 checked:ring-inset"
+      className="checked:border-twitch checked:ring-twitch normal:checked:ring peer h-4 w-4 cursor-pointer appearance-none rounded-full border-2 border-neutral-500 checked:ring-2 checked:ring-inset"
       type="radio"
       name="quality"
       onChange={(e) => e.stopPropagation()}

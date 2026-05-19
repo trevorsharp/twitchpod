@@ -1,5 +1,5 @@
-import env from "~/env";
-import type { User, Video } from "~/types";
+import env from "@/env";
+import type { User, Video } from "@/types";
 
 type DataWrapper<T> = { data?: T };
 

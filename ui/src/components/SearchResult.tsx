@@ -1,5 +1,5 @@
-import { indexRoute } from "../routes";
-import AddFeed from "./AddFeed";
+import { indexRoute } from "@ui/routes";
+import AddFeed from "@ui/components/AddFeed";
 
 const SearchResult = () => {
   const feedData = indexRoute.useLoaderData();

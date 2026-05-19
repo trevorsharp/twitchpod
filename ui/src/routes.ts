@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router";
-import MainPage from "./components/MainPage";
-import type { User } from "./types";
+import MainPage from "@ui/components/MainPage";
+import type { User } from "@ui/types";
 
 type SearchLoaderData = { error?: string; user?: User } | undefined;
 

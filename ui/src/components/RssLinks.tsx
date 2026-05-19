@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Quality } from "../types";
+import { Quality } from "@/types";
 
 type RssLinksProps = {
   username: string;

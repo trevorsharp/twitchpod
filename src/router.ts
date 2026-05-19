@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
-import env from "~/env";
-import { getRssFeed } from "~/services/feedService";
-import { getUserData } from "~/services/twitchService";
-import { getStreamUrl } from "~/services/videoService";
-import { Quality } from "~/types";
+import env from "@/env";
+import { getRssFeed } from "@/services/feedService";
+import { getUserData } from "@/services/twitchService";
+import { getStreamUrl } from "@/services/videoService";
+import { Quality } from "@/types";
 
 const router = new Hono();
 

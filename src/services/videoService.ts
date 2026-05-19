@@ -1,5 +1,5 @@
-import { Quality } from "~/types";
-import { getVodPlaylist } from "./m3u8Service";
+import { Quality } from "@/types";
+import { getVodPlaylist } from "@/services/m3u8Service";
 
 const getStreamUrl = async (videoId: string, quality: Quality) => {
   const [, playlistData] = await getVodPlaylist(videoId);
