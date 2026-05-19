@@ -8,4 +8,4 @@ Bun.serve({
   idleTimeout: 120,
 });
 
-console.log(`twitchPOD listening on port ${port}`);
+console.log(`twitchPOD is up and running`);
