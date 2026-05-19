@@ -1,7 +1,5 @@
 // Sourced from https://github.com/dudik/twitch-m3u8
 
-import "server-only";
-
 type AccessToken = { value: string; signature: string };
 
 const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko";
@@ -28,7 +26,6 @@ const getAccessToken = (videoId: string, isVod: boolean) => {
     method: "POST",
     headers: { "Client-id": clientId },
     body: data,
-    next: { revalidate: 5 * 60 },
   })
     .then(
       (response) =>
@@ -58,7 +55,7 @@ const getPlaylist = (videoId: string, accessToken: AccessToken, isVod: boolean) 
     }/${videoId}.m3u8?client_id=${clientId}&token=${encodeURIComponent(accessToken.value)}&sig=${
       accessToken.signature
     }&allow_source=true&allow_audio_only=true`,
-    { cache: "no-store" },
+    undefined,
   )
     .then((response) => response.text())
     .catch(() => {

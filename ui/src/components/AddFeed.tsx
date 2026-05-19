@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { Quality } from "~/types";
+import { Quality } from "../types";
 import QualitySelection from "./QualitySelection";
 import RssLinks from "./RssLinks";
 

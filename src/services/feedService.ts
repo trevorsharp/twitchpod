@@ -1,4 +1,3 @@
-import "server-only";
 import { Podcast } from "podcast";
 import { Quality } from "~/types";
 import { getUserData, getVideos } from "./twitchService";

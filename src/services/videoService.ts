@@ -1,4 +1,3 @@
-import "server-only";
 import { Quality } from "~/types";
 import { getVodPlaylist } from "./m3u8Service";
 

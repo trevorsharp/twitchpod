@@ -1,12 +1,12 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
+  ignorePatterns: ["node_modules/", "ui/node_modules/", "static/"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: true,
   },
   plugins: ["@typescript-eslint", "simple-import-sort", "prettier"],
   extends: [
-    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
     "plugin:prettier/recommended",
@@ -49,11 +49,7 @@ const config = {
       },
     ],
     "simple-import-sort/exports": "warn",
-    "import/first": "warn",
-    "import/no-duplicates": "warn",
     "@typescript-eslint/consistent-type-imports": "warn",
-    "@next/next/no-img-element": "off",
-    "react-hooks/exhaustive-deps": "off",
   },
 };
 

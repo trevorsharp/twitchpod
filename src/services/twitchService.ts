@@ -1,5 +1,4 @@
-import "server-only";
-import { env } from "~/env";
+import env from "~/env";
 import type { User, Video } from "~/types";
 
 type DataWrapper<T> = { data?: T };
@@ -100,7 +99,7 @@ const getVideos = async (userId: string) => {
 const getTwitchToken = async () => {
   const data = await fetch(
     `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_API_CLIENT_ID}&client_secret=${env.TWITCH_API_SECRET}&grant_type=client_credentials`,
-    { method: "POST", next: { revalidate: 2 * 60 * 60 } },
+    { method: "POST" },
   ).then((response) => response.json() as Promise<{ access_token?: string; expires_in?: number }>);
 
   if (!data?.access_token || !data?.expires_in) throw "Could not get Twitch API token";
@@ -108,7 +107,7 @@ const getTwitchToken = async () => {
   return data.access_token;
 };
 
-const getTwitch = async <T>(url: string, options?: { ttl?: number }) => {
+const getTwitch = async <T>(url: string, _options?: { ttl?: number }) => {
   const token = await getTwitchToken();
 
   const headers = {
@@ -116,13 +115,7 @@ const getTwitch = async <T>(url: string, options?: { ttl?: number }) => {
     "Client-Id": env.TWITCH_API_CLIENT_ID,
   };
 
-  const cacheOptions = options?.ttl
-    ? ({ next: { revalidate: options?.ttl ?? 0 } } as const)
-    : ({ cache: "no-store" } as const);
-
-  const data = await fetch(url, { headers, ...cacheOptions }).then(
-    (response) => response.json() as Promise<T>,
-  );
+  const data = await fetch(url, { headers }).then((response) => response.json() as Promise<T>);
 
   return data;
 };
