@@ -3,9 +3,10 @@ WORKDIR /app
 
 FROM base AS build
 
-COPY ui/package.json ui/bun.lock ./
-RUN bun install --frozen-lockfile
-COPY ./ui .
+COPY ui/package.json ui/bun.lock ./ui
+RUN cd ui && bun install --frozen-lockfile
+COPY ./ui ./ui
+COPY ./package.json ./package.json
 COPY ./tsconfig.json ./tsconfig.json
 ENV SKIP_ENV_VALIDATION=true
 RUN bun run build
