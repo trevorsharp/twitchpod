@@ -32,9 +32,10 @@ router.get("/:username/feed", async (context) => {
   try {
     const username = context.req.param("username");
     const host = context.req.header("host") ?? "";
+    const isHttps = context.req.header("x-forwarded-proto") === "https";
     const quality = getQuality(context.req.query("quality"));
 
-    const rssFeed = await getRssFeed(username, host, quality);
+    const rssFeed = await getRssFeed(username, `${isHttps ? "https" : "http"}://${host}`, quality);
 
     return context.body(rssFeed, 200, {
       "Cache-Control": "s-maxage=900",
@@ -50,7 +51,7 @@ router.get("/:username/feed", async (context) => {
 
 router.get("/videos/:videoId", async (context) => {
   try {
-    const videoId = context.req.param("videoId");
+    const videoId = context.req.param("videoId").replace(/\.m3u8$/i, "");
     const quality = getQuality(context.req.query("quality"));
 
     const streamUrl = await getStreamUrl(videoId, quality);
