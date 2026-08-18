@@ -33,9 +33,10 @@ router.get("/:username/feed", async (context) => {
     const username = context.req.param("username");
     const host = context.req.header("host") ?? "";
     const isHttps = context.req.header("x-forwarded-proto") === "https";
+    const baseUrl = `${isHttps ? "https" : "http"}://${host}`;
     const quality = getQuality(context.req.query("quality"));
 
-    const rssFeed = await getRssFeed(username, `${isHttps ? "https" : "http"}://${host}`, quality);
+    const rssFeed = await getRssFeed(username, baseUrl, quality);
 
     return context.body(rssFeed, 200, {
       "Cache-Control": "s-maxage=900",
