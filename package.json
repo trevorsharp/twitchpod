@@ -10,7 +10,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "hono": "4.12.25",
+    "hono": "4.13.11",
     "podcast": "2.0.1"
   },
   "devDependencies": {

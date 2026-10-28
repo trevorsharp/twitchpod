@@ -6,12 +6,12 @@
     "build": "vite build --outDir '../static' --emptyOutDir"
   },
   "dependencies": {
-    "@hookform/resolvers": "3.10.0",
+    "@hookform/resolvers": "5.2.2",
     "@tanstack/react-router": "1.170.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "7.76.0",
-    "zod": "3.25.76"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@tailwindcss/forms": "0.5.11",
@@ -21,6 +21,6 @@
     "@vitejs/plugin-react": "^6.0.2",
     "tailwindcss": "4.3.0",
     "typescript": "5.9.3",
-    "vite": "^8.0.13"
+    "vite": "^8.1.6"
   }
 }
